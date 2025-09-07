@@ -1,10 +1,14 @@
 import type { RouteObject } from "react-router-dom";
-import Home from "./pages/home/Home"
 import About from "./pages/about/About";
-import Order from "./pages/order/Order";
+import ProductList from "./modules/product/ProductList";
+import Home from "./pages/home/Home";
+import Doctors from "./modules/doctor/Doctors";
+import Booking from "./modules/booking/chunk/Booking";
 
 export const routes: RouteObject[] = [
   { path: "/", element: <Home /> },
   { path: "/about", element: <About /> },
-  { path: "/profile", element: <Order /> },
+  {path: "/productlist", element: <ProductList />},
+  {path: "/booking", element: <Booking />},
+  {path: "/doctors", element: <Doctors />}
 ];

@@ -11,10 +11,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "./ui/input";
@@ -26,7 +23,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {/* Column 1 */}
           <div>
-            <h3 className="text-white font-semibold mb-3">About Sephora</h3>
+            <h3 className="text-white font-semibold mb-3">About LuxeLook</h3>
             <ul className="space-y-2 text-sm">
               <li>About Luxe Look</li>
               <li>Newsroom</li>
@@ -37,7 +34,7 @@ const Footer = () => {
 
           {/* Column 2 */}
           <div>
-            <h3 className="text-white font-semibold mb-3">My Sephora</h3>
+            <h3 className="text-white font-semibold mb-3">My LuxeLook</h3>
             <ul className="space-y-2 text-sm">
               <li>Beauty Insider</li>
               <li>Luxe Look Credit Card</li>
@@ -65,8 +62,19 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Signup Form */}
           <div>
+            <div className="flex justify-start">
+              <MessageCircleMore />
+              <h4 className="ml-4 text-white font-semibold mb-3">Online Chat</h4>
+            </div>
+            <p className="space-y-2 text-sm">
+              Available on weekdays from 8am - 12 pm and 1pm to 5pm
+              (Myanmar Time Zone UTC+06:30)
+            </p>
+          </div>
+
+          {/* Signup Form */}
+          {/* <div>
             <div>
               <AlertDialog>
                 <AlertDialogTrigger className="flex justify-start">
@@ -103,7 +111,7 @@ const Footer = () => {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <hr className="border-gray-700 my-8" />
