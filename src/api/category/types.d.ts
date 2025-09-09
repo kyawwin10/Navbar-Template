@@ -10,5 +10,5 @@ export type categoryIdPayload = {
 export type categoryInstanceWithProductsPayload = {
   catInstanceId: string;
   catInstanceName: string;
-  products: productPayload[];
+  products: productsPayload[];
 };

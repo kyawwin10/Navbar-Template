@@ -1,5 +1,6 @@
 import type { categoryGetAllPayload, categoryIdPayload, categoryInstanceWithProductsPayload } from "./types";
 import { axiosInstance } from "../axiosInstance";
+import type { productPayload } from "../product/types";
 
 const baseURL = '/api/Category';
 
@@ -19,4 +20,9 @@ const getCategoryInstancesWithProducts = async (catId: string): Promise<category
   return response.data.data;
 };
 
-export default { getAllCategory, categoryCatId, getCategoryInstancesWithProducts };
+const getProductByCatInstance = async (catId: string): Promise<productPayload[]> => {
+  const response = await axiosInstance.get(`/api/Product/getproductbyCatInstance/${catId}`);
+  return response.data.data;
+};
+
+export default { getAllCategory, categoryCatId, getCategoryInstancesWithProducts, getProductByCatInstance };

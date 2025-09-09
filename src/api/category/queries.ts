@@ -1,6 +1,7 @@
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { categoryGetAllPayload, categoryIdPayload, categoryInstanceWithProductsPayload } from "./types";
 import CategoryServices from "./services";
+import type { productPayload } from "../product/types";
 
 export const getCategoryList = {
   useQuery: (opt?: UseQueryOptions<categoryGetAllPayload[]>) =>
@@ -26,6 +27,16 @@ export const categoryInstancesWithProducts = {
     useQuery({
       queryKey: ['categoryInstancesWithProducts', catId],
       queryFn: () => CategoryServices.getCategoryInstancesWithProducts(catId),
+      enabled: !!catId,
+      ...opt,
+    })
+};
+
+export const getProductbyCatInstance = {
+  useQuery: (catId: string, opt?: UseQueryOptions<productPayload[]>) =>
+    useQuery({
+      queryKey: ['getProductbyCatInstance', catId],
+      queryFn: () => CategoryServices.getProductByCatInstance(catId),
       enabled: !!catId,
       ...opt,
     })

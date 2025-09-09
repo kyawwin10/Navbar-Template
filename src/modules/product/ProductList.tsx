@@ -1,4 +1,3 @@
-// src/components/ProductList.tsx
 import React, { useCallback, useState } from "react";
 import { getByProduct, getProductList } from "@/api/product/queries";
 import type { productPayload } from "@/api/product/types";
@@ -19,13 +18,20 @@ import { orderDetails } from "@/api/order/queries";
 import ProductDetails from "./ProductDetails";
 import { useDispatch } from "react-redux";
 import { addToCarts } from "@/store/feature/cartSlice";
+import { useLocation } from "react-router-dom";
+import { getProductbyCatInstance } from "@/api/category/queries";
 
 const ProductList: React.FC = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState<number>(15);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [language, setLanguage] = useState<string>("us");
   const [selectProductId, setSelectProductId] = useState<string | null>("");
+
+  const selectedProductID = location.state?.productID || null;
+  const catId = location.state?.catId || null;
 
   const debouncedSetPageSize = useCallback(
     debounce((value: number) => {
@@ -43,7 +49,11 @@ const ProductList: React.FC = () => {
     []
   );
 
-  const { data, isLoading, error } = getProductList.useQuery({
+  const {
+    data: allProducts,
+    isLoading,
+    error,
+  } = getProductList.useQuery({
     pageNumber,
     pageSize,
     language,
@@ -53,7 +63,14 @@ const ProductList: React.FC = () => {
     data: productById,
     isLoading: productDetailsLoading,
     error: productDetailsError,
-  } = getByProduct.useQuery({ id: selectProductId! });
+  } = getByProduct.useQuery({ id: selectProductId || selectedProductID });
+
+  // const { data: filteredProduct } = getByProduct.useQuery({
+  //   id: selectedProductID!,
+  // });
+
+  const { data: productsByCatInstance } =
+    getProductbyCatInstance.useQuery(catId);
 
   const handlePageChange = (newPage: number) => {
     if (newPage > 0) {
@@ -94,14 +111,8 @@ const ProductList: React.FC = () => {
       currencySymbol: product.currencySymbol,
       productImageUrl: product.productImageUrl,
       qty: 1,
-      stockQTY: 1
+      stockQTY: 1,
     };
-    // const payload: orderDetailsPayload[] = [
-    //   {
-    //     productId,
-    //     qty: 1,
-    //   },
-    // ];
     dispatch(addToCarts(payload));
     addToCart([{ productId: product.productId, qty: 1 }]);
   };
@@ -113,65 +124,100 @@ const ProductList: React.FC = () => {
   const closeDialog = () => {
     setSelectProductId("");
   };
+  //   let filteredData;
+
+  // if (selectedProductID && selectedProductID !== "") {
+  //   if (filteredProduct) {
+  //     filteredData = [filteredProduct];
+  //   } else {
+  //     filteredData = allProducts?.filter(
+  //       (product: productPayload) => product.productId === selectedProductID
+  //     );
+  //   }
+  // } else {
+  //   filteredData = allProducts;
+  // }
+
+  let filteredData;
+  if (selectedProductID && productById) {
+    filteredData = [productById];
+  } else if (catId && productsByCatInstance) {
+    filteredData = productsByCatInstance;
+  } else {
+    filteredData = allProducts;
+  }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-2 text-center">Products</h1>
-
+      {/* <h1 className="text-2xl font-semibold mb-2 text-center">Products</h1> */}
       {isLoading && (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
         </div>
       )}
-
       {error && (
         <div className="text-center text-red-500">
           Error fetching products: {(error as Error).message}
         </div>
       )}
 
-      {/* Product Grid */}
-      {!isLoading && !error && data && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {data.map((product: productPayload) => (
-            <div
-              key={product.productId}
-              className="border rounded-lg shadow-md p-2 hover:shadow-lg bg-[#f8f8f8]"
-            >
-              <img
-                // src={product.productImageUrl}
-                src="image/skincare.jpg"
-                alt="image"
-                className="w-full h-44 object-cover rounded-md"
-                onClick={() => productByIdClick(product.productId)}
-              />
-              <h2 className="text-md font-semibold">{product.productName}</h2>
-              <p className="text-sm text-black">{product.brandName}</p>
-              <p className="text-gray-500 text-sm mt-1 line-clamp-2">
-                {product.productDescription}
-              </p>
-              <p className="text-sm font-semibold mt-1">
-                {product.price.toFixed(2)}
-                {product.currencySymbol}
-              </p>
-              <p className="text-sm text-gray-500">
-                In Stock: {product.stockQTY}
-              </p>
-              <div className="flex justify-between px-2 items-center mt-2">
-                <Heart
-                  className="cursor-pointer"
-                  // onClick={() => addToFavorite(product.productId)}
-                />
-                <Button
-                  disabled={isPending}
-                  className="text-white rounded transition-colors"
-                  onClick={() => addToCartClick(product)}
-                >
-                  Add To Cart
-                </Button>
+      {/* ProductID Filter and Product */}
+      {!isLoading && !error && filteredData && (
+        <div
+          className={
+            filteredData.length === 1
+              ? "flex justify-center"
+              : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"
+          }
+        >
+          {filteredData.length > 0 ? (
+            filteredData.map((product: productPayload) => (
+              <div
+                key={product.productId}
+                className="flex flex-col items-center text-center"
+              >
+                <div className="w-30 h-38 flex items-center justify-center rounded shadow">
+                  <img
+                    src="image/skincare.jpg"
+                    alt={product.productName}
+                    className="w-full h-full object-contain cursor-pointer"
+                    onClick={() => productByIdClick(product.productId)}
+                  />
+                </div>
+
+                <h2 className="text-sm font-semibold mt-2">
+                  {product.productName}
+                </h2>
+                <p className="text-sm text-[#731212]">{product.brandName}</p>
+                <p className="text-sm text-[#731212] line-clamp-2">
+                  {product.productDescription}
+                </p>
+
+                <p className="text-base font-bold mt-1">
+                  {product.currencySymbol}
+                  {product.price.toFixed(2)}
+                </p>
+                <p className="text-xs text-gray-500">
+                  In Stock: {product.stockQTY}
+                </p>
+
+                <div className="flex justify-center items-center gap-3 mt-2">
+                  <Heart className="cursor-pointer" size={18} />
+                  <Button
+                    disabled={isPending}
+                    className="text-white rounded px-3 py-1 text-sm"
+                    onClick={() => addToCartClick(product)}
+                  >
+                    Add To Cart
+                  </Button>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500 col-span-full">
+              No products found for "{selectedProductID}".
             </div>
-          ))}
+          )}
         </div>
       )}
 
@@ -201,7 +247,6 @@ const ProductList: React.FC = () => {
           </div>
         </div>
       )}
-
       <div className="flex items-center justify-between w-full mt-8">
         {/* Page size */}
         <div>
@@ -220,7 +265,7 @@ const ProductList: React.FC = () => {
 
         {/* Pagination */}
         <div className="flex-1 flex justify-center">
-          {!isLoading && !error && data && (
+          {!isLoading && !error && allProducts && (
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
@@ -260,11 +305,11 @@ const ProductList: React.FC = () => {
                   <PaginationNext
                     onClick={(e) => {
                       e.preventDefault();
-                      if (data.length >= pageSize)
+                      if (allProducts.length >= pageSize)
                         handlePageChange(pageNumber + 1);
                     }}
                     className={
-                      data.length < pageSize
+                      allProducts.length < pageSize
                         ? "pointer-events-none opacity-50"
                         : ""
                     }

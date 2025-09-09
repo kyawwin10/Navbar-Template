@@ -67,17 +67,12 @@ const Navbar: React.FC = () => {
   return (
     <>
       <header className="border-b border-gray-200">
-        <div className="flex items-center justify-between px-22 py-4">
-          {/* <img
-            src="/image/LuxeLookLogo.jpg"
-            alt="image"
-            className="h-12 w-auto object-cover rounded-full shadow"
-          /> */}
+        <div className="flex items-center justify-between shadow p-4">
           <div className="text-3xl font-serif italic text-[#731212]">
             Luxe Look
           </div>
 
-          <div className="flex-1 max-w-2xl mx-6">
+          <div className="flex-1 max-w-[250px] mx-6">
             <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
               <input
                 type="text"
@@ -166,7 +161,8 @@ const Navbar: React.FC = () => {
                   onMouseEnter={() => setOpenCatId(cat.catId)}
                   onMouseLeave={() => setOpenCatId(null)}
                 >
-                  <div
+                  <Link
+                    to={`/productList`}
                     className={`px-4 md:px-6 py-3 text-sm font-semibold md:text-base h-full flex items-center transition-all duration-200 ${
                       isActive
                         ? "text-[#C5A572] bg-gray-50 font-semibold border-b-2 border-[#C5A572]"
@@ -174,7 +170,7 @@ const Navbar: React.FC = () => {
                     }`}
                   >
                     {cat.catName}
-                  </div>
+                  </Link>
 
                   {/* Dropdown (Mega Menu) */}
                   {openCatId === cat.catId && (
@@ -228,6 +224,8 @@ const CategoryInstanceDropdown: React.FC<{
     error,
   } = categoryInstancesWithProducts.useQuery(catId);
 
+  const navigate = useNavigate();
+
   if (isLoading) {
     return <div className="p-6 text-gray-500">Loading categories...</div>;
   }
@@ -244,18 +242,28 @@ const CategoryInstanceDropdown: React.FC<{
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 p-8">
       {instances?.map((instance) => (
         <div key={instance.catInstanceId} className="flex flex-col">
-          <h3 className="font-semibold text-lg mb-4 text-gray-900 hover:text-[#C5A572] transition-colors">
-            {instance.catInstanceName}
-          </h3>
+          <h3
+            className="font-semibold text-lg mb-4 text-gray-900 hover:text-[#C5A572] transition-colors"
+            onClick={() => {
+              navigate("/productlist", {
+                state: {catId: catId}
+              });
+              onClose();
+            }}
+          >{instance.catInstanceName}</h3>
           {instance.products.map((product) => (
-            <Link
+            <div
               key={product.productID}
-              to={`/productlist`}
               className="text-sm text-gray-600 hover:text-[#C5A572] py-1.5 transition-colors"
-              onClick={onClose}
+              onClick={() => {
+                navigate("/productlist", {
+                  state: { productID: product.productID },
+                });
+                onClose();
+              }}
             >
               {product.productName}
-            </Link>
+            </div>
           ))}
         </div>
       ))}
