@@ -1,5 +1,5 @@
 import type { OrderItem } from "@/types/order/order";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Order = () => {
     const [selected, setSelected] = useState<string | null>(null);

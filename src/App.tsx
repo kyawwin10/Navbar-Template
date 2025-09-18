@@ -24,6 +24,11 @@ function App() {
       element: <MainLayout />,
       children: routes,
     },
+
+    {
+      path: "*",
+      element: <Login />,
+    },
   ]);
   <Toaster richColors closeButton />
   return element;

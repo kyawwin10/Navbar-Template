@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { RxDotFilled } from "react-icons/rx";
 import { Link } from "react-router-dom";
+import Marquee from "react-fast-marquee";
 
 const Home: React.FC = () => {
   const images = [
@@ -10,17 +11,6 @@ const Home: React.FC = () => {
     { src: "/image/luxelook11.png" },
     { src: "/image/luxelook13.png" },
     { src: "/image/p2.png" },
-  ];
-
-  const people = [
-    {
-      src: "/image/photo_2025-08-29_22-12-50.jpg",
-      bg: "bg-gradient-to-r from-pink-400 to-purple-400",
-    },
-    { src: "/image/photo_2025-08-29_22-13-39.jpg", bg: "bg-pink-200" },
-    { src: "/image/photo_2025-08-29_22-13-44.jpg", bg: "bg-blue-400" },
-    { src: "/image/solares.png", bg: "bg-orange-300" },
-    { src: "/image/download.jpg", bg: "bg-green-300" },
   ];
 
   const categories = [
@@ -78,14 +68,12 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-full h-[610px] w-full m-auto relative group mb-5">
-        {/* Background Image */}
+      <div className="max-w-full h-[510px] w-full m-auto relative group mb-5">
         <div
           style={{ backgroundImage: `url(${images[currentIndex].src})` }}
           className="w-full h-full bg-center bg-cover duration-500"
         ></div>
 
-        {/* Left Arrow */}
         <div
           onClick={prevSlide}
           className="hidden group-hover:block absolute top-[50%] -translate-y-1/2 left-5 text-2xl rounded-full bg-black/20 text-white cursor-pointer"
@@ -93,7 +81,6 @@ const Home: React.FC = () => {
           <ChevronLeft size={30} />
         </div>
 
-        {/* Right Arrow */}
         <div
           onClick={nextSlide}
           className="hidden group-hover:block absolute top-[50%] -translate-y-1/2 right-5 text-2xl rounded-full bg-black/20 text-white cursor-pointer"
@@ -116,47 +103,34 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-4 justify-center mt-20 p-4">
-        {people.map((person, index) => (
-          <div
-            key={index}
-            className="w-32 h-32 flex items-center justify-center rounded-lg shadow hover:scale-105 transition"
-          >
-            <div
-              className={`w-28 h-28 ${person.bg} rounded-full flex items-center justify-center`}
-            >
-              <img
-                src={person.src}
-                alt="profile"
-                className="w-24 h-24 object-cover rounded-full border-4 border-white"
-              />
-            </div>
-          </div>
-        ))}
+      <div className="flex justify-center items-center gap-4 my-10">
+        <div className="text-md font-semibold">New Arrival</div>
+        <div className="text-md font-semibold">BestSeller</div>
+        <div className="text-md font-semibold">Special</div>
       </div>
 
-      <div className="flex gap-8 justify-center flex-wrap mt-20 mb-10">
-        {categories.map((cat, index) => (
-          <Link
-            key={index}
-            to="/productlist"
-            className="flex flex-col items-center cursor-pointer"
-          >
-            {/* Image with oval shape */}
-            <div className="w-32 h-48 overflow-hidden rounded-[50%] flex items-center justify-center shadow-md hover:scale-105 transition">
-              <img
-                src={cat.src}
-                alt={cat.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* Label */}
-            <p className="mt-3 text-sm font-semibold tracking-wide text-gray-700">
-              {cat.title}
-            </p>
-          </Link>
-        ))}
-      </div>
+      <Marquee>
+        <div className="flex gap-16 justify-center flex-wrap mb-10">
+          {categories.map((cat, index) => (
+            <Link
+              key={index}
+              to="/productlist"
+              className="flex flex-col items-center cursor-pointer"
+            >
+              <div className="w-25 h-25 overflow-hidden rounded-full flex items-center justify-center shadow">
+                <img
+                  src={cat.src}
+                  alt={cat.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <p className="mt-3 text-sm font-semibold tracking-wide text-gray-700">
+                {cat.title}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </Marquee>
     </>
   );
 };

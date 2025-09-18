@@ -1,5 +1,5 @@
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
-import type { orderAddPayload, orderDetailsPayload } from "./types";
+import type { favouriteListPayload, orderAddPayload, orderDetailsPayload } from "./types";
 import OrderServices from "./services";
 
 export const orderDetails = {
@@ -9,6 +9,17 @@ export const orderDetails = {
     useMutation<any, Error, orderDetailsPayload[], unknown>({
       mutationKey: ["orderDetails"],
       mutationFn: OrderServices.addToCart,
+      ...opt,
+    }),
+};
+
+export const favouriteOrderDetails = {
+  useAddToFavourite: (
+    opt?: UseMutationOptions<any, Error, favouriteListPayload[], unknown>
+  ) =>
+    useMutation<any, Error, favouriteListPayload[], unknown>({
+      mutationKey: ["favouriteOrderDetails"],
+      mutationFn: OrderServices.addToFavourite,
       ...opt,
     }),
 };

@@ -14,12 +14,13 @@ import {
 } from "@/components/ui/pagination";
 import { Heart } from "lucide-react";
 import toast from "react-hot-toast";
-import { orderDetails } from "@/api/order/queries";
+import { favouriteOrderDetails, orderDetails } from "@/api/order/queries";
 import ProductDetails from "./ProductDetails";
 import { useDispatch } from "react-redux";
 import { addToCarts } from "@/store/feature/cartSlice";
 import { useLocation } from "react-router-dom";
 import { getProductbyCatInstance } from "@/api/category/queries";
+import { addToFavourites } from "@/store/feature/favouriteSlice";
 
 const ProductList: React.FC = () => {
   const dispatch = useDispatch();
@@ -117,6 +118,33 @@ const ProductList: React.FC = () => {
     addToCart([{ productId: product.productId, qty: 1 }]);
   };
 
+  const addToFavouriteClick = (product: productPayload) => {
+    const payload = {
+      productId: product.productId,
+      catInstanceName: product.catInstanceName ?? "",
+      brandName: product.brandName,
+      productName: product.productName,
+      productDescription: product.productDescription,
+      cost: product.cost ?? 0,
+      price: product.price,
+      currencySymbol: product.currencySymbol,
+      productImageUrl: product.productImageUrl,
+      qty: 1,
+      stockQTY: 1,
+    };
+    dispatch(addToFavourites(payload));
+    addToFavourite([{ productId: product.productId, qty: 1 }]);
+  };
+
+  const { mutate: addToFavourite} = favouriteOrderDetails.useAddToFavourite({
+    onSuccess: () => {
+      toast.success("Added to Favourite!");
+    },
+    onError: () => {
+      toast.error("Failed to add to Favourite.");
+    },
+  });
+
   const productByIdClick = (productId: string) => {
     setSelectProductId(productId);
   };
@@ -161,7 +189,7 @@ const ProductList: React.FC = () => {
         </div>
       )}
 
-      {/* ProductID Filter and Product */}
+      {/* ProductID Filter and Products */}
       {!isLoading && !error && filteredData && (
         <div
           className={
@@ -176,16 +204,19 @@ const ProductList: React.FC = () => {
                 key={product.productId}
                 className="flex flex-col items-center text-center"
               >
-                <div className="w-30 h-38 flex items-center justify-center rounded shadow">
+                <div
+                  className="flex items-center justify-center"
+                  onClick={() => productByIdClick(product.productId)}
+                >
                   <img
+                    // src={product.productImageUrl}
                     src="image/skincare.jpg"
                     alt={product.productName}
-                    className="w-full h-full object-contain cursor-pointer"
-                    onClick={() => productByIdClick(product.productId)}
+                    className="w-36 h-40 rounded-xl object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
 
-                <h2 className="text-sm font-semibold mt-2">
+                <h2 className="text-sm font-semibold mt-2 text-[#731212]">
                   {product.productName}
                 </h2>
                 <p className="text-sm text-[#731212]">{product.brandName}</p>
@@ -202,7 +233,7 @@ const ProductList: React.FC = () => {
                 </p>
 
                 <div className="flex justify-center items-center gap-3 mt-2">
-                  <Heart className="cursor-pointer" size={18} />
+                  <Heart onClick={() => addToFavouriteClick(product)} className="cursor-pointer" size={18} />
                   <Button
                     disabled={isPending}
                     className="text-white rounded px-3 py-1 text-sm"
@@ -231,7 +262,6 @@ const ProductList: React.FC = () => {
             >
               ✕
             </button>
-            {/* Conditionally render ProductDetails only when data is available */}
             {productById ? (
               <ProductDetails
                 productDetails={productById}
@@ -247,14 +277,15 @@ const ProductList: React.FC = () => {
           </div>
         </div>
       )}
+
       <div className="flex items-center justify-between w-full mt-8">
         {/* Page size */}
-        <div>
+        <div className="shadow bg-white rounded-md border-[#731212]">
           <select
             id="pageSize"
             value={pageSize}
             onChange={handlePageSizeChange}
-            className="border rounded px-2 py-1"
+            className="px-2 py-1 hover:text-[#731212] font-semibold"
           >
             <option value={10}>10</option>
             <option value={15}>15</option>
@@ -321,18 +352,15 @@ const ProductList: React.FC = () => {
         </div>
 
         {/* Price currencies */}
-        <div>
-          <label htmlFor="language" className="mr-2 font-medium">
-            Price Currencies:
-          </label>
+        <div className="bg-white rounded-md">
           <select
             id="language"
             value={language}
             onChange={handleLanguageChange}
-            className="border rounded px-2 py-1"
+            className="px-2 py-1 font-semibold hover:text-[#731212]"
           >
-            <option value="us">English (US)</option>
-            <option value="uk">English (UK)</option>
+            <option value="us">US</option>
+            <option value="uk">UK</option>
             <option value="thailand">Spanish</option>
             <option value="japan">Japan</option>
             <option value="myanmar">Myanmar</option>

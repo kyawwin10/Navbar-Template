@@ -1,5 +1,5 @@
 import { Heart, Search, ShoppingBag, User } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,20 +19,21 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import CartPage from "@/modules/cart/CartPage";
 
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-
 const Navbar: React.FC = () => {
   const [cartIconOpen, setCartIconOpen] = useState(false);
+  const [favouriteIconOpen, setFavouriteIconOpen] = useState(false);
+
+  const location = useLocation();
+  // const isActive = location.pathname === `/doctorlist`;
 
   const cart = useSelector((state: RootState) => state.cart.items);
   const totalItems = cart.reduce((sum, item) => sum + item.stockQTY, 0);
+
+  const favaurite = useSelector((state: RootState) => state.favourite.items);
+  const totalFavourites = favaurite.reduce(
+    (sum, item) => sum + item.stockQTY,
+    0
+  );
   const navigate = useNavigate();
 
   const {
@@ -67,13 +68,20 @@ const Navbar: React.FC = () => {
   return (
     <>
       <header className="border-b border-gray-200">
-        <div className="flex items-center justify-between shadow p-4">
-          <div className="text-3xl font-serif italic text-[#731212]">
+        <div className="flex items-center justify-between shadow px-4">
+          <div className="text-sm font-semibold text-[#731212]">
+            Customer Service :{" "}
+            <a href="tel:+959404159420" className="hover:underline">
+              (+95) 9404159420
+            </a>
+          </div>
+
+          <div className="flex-1 max-w-[250px] mx-6 text-2xl font-semibold text-[#731212]">
             Luxe Look
           </div>
 
-          <div className="flex-1 max-w-[250px] mx-6">
-            <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
+          <div className="flex items-center space-x-5">
+            <div className="flex items-center bg-gray-100 rounded-2xl my-2 py-1 px-4">
               <input
                 type="text"
                 placeholder="Search entire store here..."
@@ -83,9 +91,6 @@ const Navbar: React.FC = () => {
                 <Search className="h-4 w-4" />
               </button>
             </div>
-          </div>
-
-          <div className="flex items-center space-x-5">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <img
@@ -118,8 +123,16 @@ const Navbar: React.FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <button className="hover:text-gray-600">
-              <Heart className="h-6 w-6" />
+            <button className="hover:text-gray-600 relative">
+              <Heart
+                className="h-6 w-6"
+                onClick={() => setFavouriteIconOpen(true)}
+              />
+              {totalFavourites > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {totalFavourites}
+                </span>
+              )}
             </button>
             <button
               className="hover:text-gray-600 relative"
@@ -133,8 +146,10 @@ const Navbar: React.FC = () => {
               )}
             </button>
             <CartPage
-              open={cartIconOpen}
-              onClose={() => setCartIconOpen(false)}
+              cartOpen={cartIconOpen}
+              favouriteOpen={favouriteIconOpen}
+              onCartClose={() => setCartIconOpen(false)}
+              onFavClose={() => setFavouriteIconOpen(false)}
             />
 
             <DropdownMenu>
@@ -150,7 +165,17 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        <nav className="flex flex-wrap justify-start items-center font-medium h-14 px-8 md:px-16 relative">
+        <nav className="flex justify-start items-center font-medium h-14 px-8 md:px-16 relative">
+          <Link
+            to={"/"}
+            className={`px-4 md:px-6 m-2 text-sm font-semibold md:text-base h-12 flex items-center transition-all duration-200 ${
+              location.pathname === "/"
+                ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
+                : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
+            }`}
+          >
+            Home
+          </Link>
           {categories && categories.length > 0 ? (
             categories.map((cat) => {
               const isActive = location.pathname === `/${cat.catId}`;
@@ -165,16 +190,16 @@ const Navbar: React.FC = () => {
                     to={`/productList`}
                     className={`px-4 md:px-6 py-3 text-sm font-semibold md:text-base h-full flex items-center transition-all duration-200 ${
                       isActive
-                        ? "text-[#C5A572] bg-gray-50 font-semibold border-b-2 border-[#C5A572]"
-                        : "text-gray-800 hover:text-white hover:bg-[#C5A572] rounded-md"
+                        ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
+                        : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
                     }`}
                   >
                     {cat.catName}
                   </Link>
 
-                  {/* Dropdown (Mega Menu) */}
+                  {/* Dropdown */}
                   {openCatId === cat.catId && (
-                    <div className="fixed left-0 right-0 top-[-18] ml-12 hidden group-hover:block w-[93vw] bg-white shadow-xl rounded-b-lg z-50">
+                    <div className="absolute left-0 right-0 top-[-18] ml-12 hidden group-hover:block w-[93vw] bg-gray-200 mt-1 shadow-xl rounded-b-lg z-50">
                       <CategoryInstanceDropdown
                         catId={cat.catId}
                         onClose={() => setOpenCatId(null)}
@@ -187,27 +212,18 @@ const Navbar: React.FC = () => {
           ) : (
             <p className="text-gray-500">Categories Not found.</p>
           )}
-        </nav>
 
-        <NavigationMenu viewport={true}>
-          <NavigationMenuList>
-            <NavigationMenuItem className="text-sm font-semibold">
-              <NavigationMenuTrigger>Service</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-4">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to={"/doctors"}>Doctor</Link>
-                    </NavigationMenuLink>
-                    <NavigationMenuLink asChild>
-                      <Link to={"/booking"}>Booking</Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+          <Link
+            to={"/doctorlist"}
+            className={`px-4 md:px-6 m-2 h-12 text-sm font-semibold md:text-base flex items-center transition-all duration-200 ${
+              location.pathname === "/doctorlist"
+                ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
+                : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
+            }`}
+          >
+            Service
+          </Link>
+        </nav>
       </header>
     </>
   );
@@ -246,11 +262,13 @@ const CategoryInstanceDropdown: React.FC<{
             className="font-semibold text-lg mb-4 text-gray-900 hover:text-[#C5A572] transition-colors"
             onClick={() => {
               navigate("/productlist", {
-                state: {catId: catId}
+                state: { catId: catId },
               });
               onClose();
             }}
-          >{instance.catInstanceName}</h3>
+          >
+            {instance.catInstanceName}
+          </h3>
           {instance.products.map((product) => (
             <div
               key={product.productID}

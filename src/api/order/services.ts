@@ -1,5 +1,5 @@
 import { axiosInstance } from "../axiosInstance";
-import type { orderAddPayload, orderDetailsPayload } from "./types";
+import type { favouriteListPayload, orderAddPayload, orderDetailsPayload } from "./types";
 
 const baseURL = '/api/Order';
 
@@ -8,9 +8,14 @@ const addToCart = async (payload: orderDetailsPayload[]) => {
     return response.data;
 }
 
+const addToFavourite = async (payload: favouriteListPayload[]) => {
+    const response = await axiosInstance.post(`${baseURL}/addtofavourite`, {favouriteItemsList: payload});
+    return response.data;
+}
+
 const addOrder = async (payload: orderAddPayload): Promise<any> => {
     const response = await axiosInstance.post(`${baseURL}/add`, payload);
     return response.data;
 }
 
-export default { addToCart, addOrder };
+export default { addToCart, addOrder, addToFavourite };

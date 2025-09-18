@@ -20,17 +20,20 @@ import { addOrders } from "@/api/order/queries";
 import type { orderAddPayload } from "@/api/order/types";
 import toast from "react-hot-toast";
 import { CircleMinus, CirclePlus } from "lucide-react";
+import { clearFavourite, decreasementQty, increasementQty, removeFromFavourite } from "@/store/feature/favouriteSlice";
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
+  cartOpen: boolean;
+  favouriteOpen: boolean;
+  onCartClose: () => void;
+  onFavClose: () => void;
 }
 
-const CartDialog: React.FC<Props> = ({ open, onClose }) => {
+const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onFavClose }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state: RootState) => state.cart.items);
+  const favaurite = useSelector((state: RootState) => state.favourite.items);
 
-  // Checkout form state
   const [orderPlace, setOrderPlace] = useState("");
   // const [orderStartPoint, setOrderStartPoint] = useState("");
   // const [orderEndPoint, setOrderEndPoint] = useState("");
@@ -41,7 +44,9 @@ const CartDialog: React.FC<Props> = ({ open, onClose }) => {
     onSuccess: () => {
       toast.success("Order placed successfully!");
       dispatch(clearCart());
-      onClose();
+      dispatch(clearFavourite());
+      onCartClose();
+      onFavClose();
     },
     onError: (err: any) => {
       toast.error(`Failed to place order: ${err.message}`);
@@ -87,8 +92,8 @@ const CartDialog: React.FC<Props> = ({ open, onClose }) => {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto space-y-4 bg-cyan-100/10 rounded-2xl shadow-2xl">
+      <Dialog open={cartOpen} onOpenChange={onCartClose}>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto space-y-4 bg-white rounded-2xl shadow-2xl">
           <DialogHeader>
             <DialogTitle>Your Cart</DialogTitle>
           </DialogHeader>
@@ -104,10 +109,10 @@ const CartDialog: React.FC<Props> = ({ open, onClose }) => {
                   className="flex justify-between items-center border-b"
                 >
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-[#731212]">
                       {item.productName}
                     </p>
-                    <p className="text-sm text-yellow-300">
+                    <p className="text-md font-semibold text-[#731212]">
                       {item.price} {item.currencySymbol} × {item.stockQTY}
                     </p>
                   </div>
@@ -207,7 +212,138 @@ const CartDialog: React.FC<Props> = ({ open, onClose }) => {
               {/* Checkout */}
               <div className="flex justify-end">
                 <Button
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6"
+                  className="bg-gray-300 hover:bg-gray-500 text-[#731212] text-md font-semibold px-6"
+                  disabled={isPending}
+                  onClick={handleCheckout}
+                >
+                  {isPending ? "Processing..." : "Proceed to Checkout"}
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={favouriteOpen} onOpenChange={onFavClose}>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto space-y-4 bg-white rounded-2xl shadow-2xl">
+          <DialogHeader>
+            <DialogTitle>Your Favourite Product</DialogTitle>
+          </DialogHeader>
+
+          {favaurite.length === 0 ? (
+            <p className="text-center text-2xl text-pink-500">Cart is empty</p>
+          ) : (
+            <>
+              {/* Cart Items */}
+              {favaurite.map((item) => (
+                <div
+                  key={item.productId}
+                  className="flex justify-between items-center border-b"
+                >
+                  <div>
+                    <p className="font-semibold text-white">
+                      {item.productName}
+                    </p>
+                    <p className="text-md font-semibold text-[#731212]">
+                      {item.price} {item.currencySymbol} × {item.stockQTY}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => dispatch(decreasementQty(item.productId))}
+                    >
+                      <CircleMinus />
+                    </Button>
+                    <span>{item.stockQTY}</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => dispatch(increasementQty(item.productId))}
+                    >
+                      <CirclePlus />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => dispatch(removeFromFavourite(item.productId))}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              {/* Totals */}
+              <div className="space-y-2 pt-4 border-b text-white">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>{subTotal}</span>
+                </div>
+                <div className="flex justify-between border-b">
+                  <span>Delivery Fee</span>
+                  <span>{deliFee}</span>
+                </div>
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Total</span>
+                  <span>{total}</span>
+                </div>
+              </div>
+
+              {/* Checkout Form */}
+              <div className="space-y-3 text-white">
+                <div>
+                  <Label className="mb-2">Order Place</Label>
+
+                  <Input
+                    value={orderPlace}
+                    onChange={(e) => setOrderPlace(e.target.value)}
+                    placeholder="Enter order place"
+                  />
+                </div>
+                {/* <div>
+                  <Label className="mb-2">Start Point</Label>
+                  <Input
+                    value={orderStartPoint}
+                    onChange={(e) => setOrderStartPoint(e.target.value)}
+                    placeholder="Enter start point"
+                  />
+                </div> */}
+                {/* <div>
+                  <Label className="mb-2">End Point</Label>
+                  <Input
+                    value={orderEndPoint}
+                    onChange={(e) => setOrderEndPoint(e.target.value)}
+                    placeholder="Enter end point"
+                  />
+                </div> */}
+                {/* <div>
+                  <Label className="mb-2">Payment Type</Label>
+                  <select
+                    className="border rounded w-full p-2"
+                    value={paymentType}
+                    onChange={(e) => setPaymentType(e.target.value)}
+                  >
+                    <option value="CashOnDelivery">Cash On Delivery</option>
+                    <option value="KBZPay">KBZ Pay</option>
+                    <option value="WavePay">Wave Pay</option>
+                  </select>
+                </div> */}
+                <div>
+                  <Label className="mb-2">Delivery Fee</Label>
+                  <Input
+                    type="text"
+                    value={deliFee}
+                    onChange={(e) => setDeliFee(Number(e.target.value))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  className="bg-gray-300 hover:bg-gray-500 text-[#731212] text-md font-semibold px-6"
                   disabled={isPending}
                   onClick={handleCheckout}
                 >

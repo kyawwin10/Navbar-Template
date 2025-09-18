@@ -1,4 +1,4 @@
-export type getAllBookingPayload = {
+export type getAllDoctorPayload = {
   doctorId: string;
   name: string;
   description: string;
@@ -6,4 +6,5 @@ export type getAllBookingPayload = {
   storeName: string;
   phoneNumber: string;
   email: string;
+  profileImageUrl: string;
 };

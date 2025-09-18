@@ -3,12 +3,11 @@ import About from "./pages/about/About";
 import ProductList from "./modules/product/ProductList";
 import Home from "./pages/home/Home";
 import Doctors from "./modules/doctor/Doctors";
-import Booking from "./modules/booking/chunk/Booking";
 
 export const routes: RouteObject[] = [
   { path: "/", element: <Home /> },
   { path: "/about", element: <About /> },
   {path: "/productlist", element: <ProductList />},
-  {path: "/booking", element: <Booking />},
-  {path: "/doctors", element: <Doctors />}
+  // {path: "/booking", element: <Booking />},
+  {path: "/doctorlist", element: <Doctors />}
 ];
