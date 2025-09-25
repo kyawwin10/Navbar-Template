@@ -77,8 +77,8 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="border-b border-gray-200">
-        <div className="flex items-center justify-between shadow px-4">
+      <header className="z-10 sticky top-0">
+        <div className="bg-[#cccccc] flex items-center justify-between shadow px-4">
           <div className="text-sm font-semibold text-[#731212]">
             Customer Service :{" "}
             <a href="tel:+959404159420" className="hover:underline">
@@ -91,7 +91,7 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-5">
-            <div className="flex items-center bg-gray-300 rounded-2xl my-2 py-1 px-4">
+            <div className="flex items-center bg-white rounded-2xl my-2 py-1 px-4">
               <input
                 type="text"
                 placeholder="Search Products Name...."
@@ -176,67 +176,66 @@ const Navbar: React.FC = () => {
             </DropdownMenu>
           </div>
         </div>
-
-        <nav className="flex justify-start items-center font-medium h-14 px-8 md:px-16 relative">
-          <Link
-            to={"/home"}
-            className={`px-4 md:px-6 m-2 text-sm font-semibold md:text-base h-12 flex items-center transition-all duration-200 ${
-              location.pathname === "/"
-                ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
-                : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
-            }`}
-          >
-            Home
-          </Link>
-          {categories && categories.length > 0 ? (
-            categories.map((cat) => {
-              const isActive = location.pathname === `/${cat.catId}`;
-              return (
-                <div
-                  key={cat.catId}
-                  className="group"
-                  onMouseEnter={() => setOpenCatId(cat.catId)}
-                  onMouseLeave={() => setOpenCatId(null)}
-                >
-                  <Link
-                    to={`/productList`}
-                    className={`px-4 md:px-6 py-3 text-sm font-semibold md:text-base h-full flex items-center transition-all duration-200 ${
-                      isActive
-                        ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
-                        : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
-                    }`}
-                  >
-                    {cat.catName}
-                  </Link>
-
-                  {/* Dropdown */}
-                  {openCatId === cat.catId && (
-                    <div className="absolute left-0 right-0 top-[-18] ml-12 hidden group-hover:block w-[93vw] bg-gray-200 mt-1 shadow-xl rounded-b-lg z-50">
-                      <CategoryInstanceDropdown
-                        catId={cat.catId}
-                        onClose={() => setOpenCatId(null)}
-                      />
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          ) : (
-            <p className="text-gray-500">Categories Not found.</p>
-          )}
-
-          <Link
-            to={"/doctorlist"}
-            className={`px-4 md:px-6 m-2 h-12 text-sm font-semibold md:text-base flex items-center transition-all duration-200 ${
-              location.pathname === "/doctorlist"
-                ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
-                : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
-            }`}
-          >
-            Service
-          </Link>
-        </nav>
       </header>
+      <nav className="bg-[#ffffff] border-b border-gray-200 flex justify-start items-center font-medium h-14 px-8 md:px-16 relative">
+        <Link
+          to={"/home"}
+          className={`px-4 md:px-6 m-2 text-sm font-semibold md:text-base h-12 flex items-center transition-all duration-200 ${
+            location.pathname === "/"
+              ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
+              : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
+          }`}
+        >
+          Home
+        </Link>
+        {categories && categories.length > 0 ? (
+          categories.map((cat) => {
+            const isActive = location.pathname === `/${cat.catId}`;
+            return (
+              <div
+                key={cat.catId}
+                className="group"
+                onMouseEnter={() => setOpenCatId(cat.catId)}
+                onMouseLeave={() => setOpenCatId(null)}
+              >
+                <Link
+                  to={`/productList`}
+                  className={`px-4 md:px-6 py-3 text-sm font-semibold md:text-base h-full flex items-center transition-all duration-200 ${
+                    isActive
+                      ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
+                      : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
+                  }`}
+                >
+                  {cat.catName}
+                </Link>
+
+                {/* Dropdown */}
+                {openCatId === cat.catId && (
+                  <div className="absolute left-0 right-0 top-[-18] ml-12 hidden group-hover:block w-[93vw] bg-gray-200 mt-1 shadow-xl rounded-b-lg z-50">
+                    <CategoryInstanceDropdown
+                      catId={cat.catId}
+                      onClose={() => setOpenCatId(null)}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-gray-500">Categories Not found.</p>
+        )}
+
+        <Link
+          to={"/doctorlist"}
+          className={`px-4 md:px-6 m-2 h-12 text-sm font-semibold md:text-base flex items-center transition-all duration-200 ${
+            location.pathname === "/doctorlist"
+              ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"
+              : "text-[#731212] hover:text-white hover:bg-[#731212] rounded-md"
+          }`}
+        >
+          Service
+        </Link>
+      </nav>
     </>
   );
 };

@@ -115,7 +115,7 @@ const Home: React.FC = () => {
         <Card className="flex flex-col md:flex-row items-center md:items-start justify-between p-6 bg-[#f5e9dc] shadow">
           <CardContent className="flex-1 space-y-3 mt-8">
             <p className="text-sm font-medium text-gray-600">500000MMK Buy</p>
-            <p className="text-sm font-medium text-gray-600">Delivery Free 1 time</p>
+            <p className="text-sm font-medium text-gray-600">Delivery Free 1 Get</p>
             <h2 className="text-xl font-semibold">Cosmetic Skin Perfectly</h2>
             <Button onClick={shopClick} className="bg-pink-700 hover:bg-pink-800 text-white rounded-full px-6 mt-4">
               Shop Now
@@ -158,7 +158,28 @@ const Home: React.FC = () => {
       </div>
 
       <Marquee>
-        <div className="flex gap-16 justify-center flex-wrap mb-10">
+        <div className="flex gap-10 justify-center flex-wrap mb-10 ml-10">
+          {categories.map((cat, index) => (
+            <Link
+              key={index}
+              to="/productlist"
+              className="flex flex-col items-center cursor-pointer"
+            >
+              <div className="w-25 h-25 overflow-hidden rounded-full flex items-center justify-center shadow">
+                <img
+                  src={cat.src}
+                  alt={cat.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <p className="mt-3 text-sm font-semibold tracking-wide text-gray-700">
+                {cat.title}
+              </p>
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex gap-10 justify-center flex-wrap mb-10 ml-10">
           {categories.map((cat, index) => (
             <Link
               key={index}
