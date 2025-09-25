@@ -12,10 +12,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Heart } from "lucide-react";
+import { CircleX, Heart } from "lucide-react";
 import toast from "react-hot-toast";
 import { favouriteOrderDetails, orderDetails } from "@/api/order/queries";
-import ProductDetails from "./ProductDetails";
 import { useDispatch } from "react-redux";
 import { addToCarts } from "@/store/feature/cartSlice";
 import { useLocation } from "react-router-dom";
@@ -25,6 +24,7 @@ import { addToFavourites } from "@/store/feature/favouriteSlice";
 const ProductList: React.FC = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const search = location.state?.search || "";
 
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -63,7 +63,6 @@ const ProductList: React.FC = () => {
   const {
     data: productById,
     isLoading: productDetailsLoading,
-    error: productDetailsError,
   } = getByProduct.useQuery({ id: selectProductId || selectedProductID });
 
   // const { data: filteredProduct } = getByProduct.useQuery({
@@ -136,7 +135,7 @@ const ProductList: React.FC = () => {
     addToFavourite([{ productId: product.productId, qty: 1 }]);
   };
 
-  const { mutate: addToFavourite} = favouriteOrderDetails.useAddToFavourite({
+  const { mutate: addToFavourite } = favouriteOrderDetails.useAddToFavourite({
     onSuccess: () => {
       toast.success("Added to Favourite!");
     },
@@ -152,19 +151,6 @@ const ProductList: React.FC = () => {
   const closeDialog = () => {
     setSelectProductId("");
   };
-  //   let filteredData;
-
-  // if (selectedProductID && selectedProductID !== "") {
-  //   if (filteredProduct) {
-  //     filteredData = [filteredProduct];
-  //   } else {
-  //     filteredData = allProducts?.filter(
-  //       (product: productPayload) => product.productId === selectedProductID
-  //     );
-  //   }
-  // } else {
-  //   filteredData = allProducts;
-  // }
 
   let filteredData;
   if (selectedProductID && productById) {
@@ -173,6 +159,12 @@ const ProductList: React.FC = () => {
     filteredData = productsByCatInstance;
   } else {
     filteredData = allProducts;
+  }
+
+  if (search && filteredData) {
+    filteredData = filteredData.filter((p: productPayload) =>
+      p.productName.toLowerCase().includes(search.toLowerCase())
+    );
   }
 
   return (
@@ -233,7 +225,11 @@ const ProductList: React.FC = () => {
                 </p>
 
                 <div className="flex justify-center items-center gap-3 mt-2">
-                  <Heart onClick={() => addToFavouriteClick(product)} className="cursor-pointer" size={18} />
+                  <Heart
+                    onClick={() => addToFavouriteClick(product)}
+                    className="cursor-pointer"
+                    size={18}
+                  />
                   <Button
                     disabled={isPending}
                     className="text-white rounded px-3 py-1 text-sm"
@@ -254,26 +250,88 @@ const ProductList: React.FC = () => {
 
       {/* Dialog for Product Details */}
       {selectProductId && (
-        <div className="fixed inset-0 bg-opacity-100 flex items-center justify-center z-50">
-          <div className="bg-[#f8f8f8] rounded-lg max-w-lg w-full mx-4 relative">
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={closeDialog}
+        >
+          <div
+            className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 overflow-hidden animate-fadeIn"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              onClick={() => closeDialog()}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={closeDialog}
+              className="absolute top-3 right-3 text-gray-400 hover:text-black transition"
             >
-              ✕
+              <CircleX size={28} />
             </button>
-            {productById ? (
-              <ProductDetails
-                productDetails={productById}
-                isLoadings={productDetailsLoading}
-                errors={productDetailsError}
-                closeDialog={closeDialog}
-              />
-            ) : (
-              <div className="p-4 text-center">
-                {productDetailsLoading ? "Loading..." : "Product not found."}
-              </div>
-            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+              {productById ? (
+                <>
+                  <div className="flex items-center justify-center">
+                    <img
+                      // src={
+                      //   productById.productImageUrl
+                      // }
+                      src="/image/hair.jpg"
+                      alt={productById.productName}
+                      className="rounded-xl w-60 h-60 object-cover shadow-md transition-transform hover:scale-105"
+                    />
+                  </div>
+
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-800">
+                        {productById.productName}
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {productById.brandName}
+                      </p>
+                      <p className="text-gray-600 text-sm mt-2 line-clamp-3">
+                        {productById.productDescription}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xl font-bold text-[#731212]">
+                        {productById.currencySymbol}
+                        {productById.price.toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        In Stock: {productById.stockQTY}
+                      </p>
+
+                      <div className="flex gap-3 mt-4">
+                        <button
+                          onClick={() =>
+                            addToCartClick(productById as productPayload)
+                          }
+                          className="px-4 py-1.5 rounded-lg bg-[#731212] text-white hover:bg-red-800 transition"
+                        >
+                          Add to Cart
+                        </button>
+                        <button
+                          onClick={() =>
+                            addToFavouriteClick(productById as productPayload)
+                          }
+                          className="px-4 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+                        >
+                          ❤️ Favourite
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="col-span-2 flex justify-center items-center p-6 text-gray-500">
+                  {productDetailsLoading ? (
+                    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-500"></div>
+                  ) : (
+                    "Product not found."
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

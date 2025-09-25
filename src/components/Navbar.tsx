@@ -22,6 +22,7 @@ import CartPage from "@/modules/cart/CartPage";
 const Navbar: React.FC = () => {
   const [cartIconOpen, setCartIconOpen] = useState(false);
   const [favouriteIconOpen, setFavouriteIconOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const location = useLocation();
   // const isActive = location.pathname === `/doctorlist`;
@@ -64,6 +65,15 @@ const Navbar: React.FC = () => {
   if (isError) {
     return <div>Error loading categories: {error?.message}</div>;
   }
+  // const handleSearch = () => {
+  //   navigate("/productlist", { state: { search: search } });
+  // };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearch(value);
+    navigate("/productlist", { state: { search: value } });
+  };
 
   return (
     <>
@@ -81,10 +91,12 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-5">
-            <div className="flex items-center bg-gray-100 rounded-2xl my-2 py-1 px-4">
+            <div className="flex items-center bg-gray-300 rounded-2xl my-2 py-1 px-4">
               <input
                 type="text"
-                placeholder="Search entire store here..."
+                placeholder="Search Products Name...."
+                value={search}
+                onChange={handleSearch}
                 className="flex-1 bg-transparent outline-none text-sm text-gray-700 placeholder-gray-500"
               />
               <button className="ml-2 text-white bg-black rounded-full p-2 hover:bg-gray-800 transition">
@@ -167,7 +179,7 @@ const Navbar: React.FC = () => {
 
         <nav className="flex justify-start items-center font-medium h-14 px-8 md:px-16 relative">
           <Link
-            to={"/"}
+            to={"/home"}
             className={`px-4 md:px-6 m-2 text-sm font-semibold md:text-base h-12 flex items-center transition-all duration-200 ${
               location.pathname === "/"
                 ? "text-white bg-[#731212] rounded-md font-semibold hover:text-white hover:bg-[#b60606]"

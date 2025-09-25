@@ -1,5 +1,5 @@
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
-import type { getAllProductPayload, productGetByIdPayload, productPayload } from "./types";
+import { useMutation, useQuery, type UseMutationOptions, type UseQueryOptions } from "@tanstack/react-query";
+import type { fileUploadPayload, getAllProductPayload, imageParamUploadPayload, productGetByIdPayload, productPayload } from "./types";
 import ProductService from "./services";
 
 // export const getCategoryList = {
@@ -31,3 +31,14 @@ export const getByProduct = {
       ...opt,
     })
 }
+
+export const addProfileImage = {
+  useMutation: (
+    opt?: UseMutationOptions<fileUploadPayload, Error, imageParamUploadPayload>
+  ) =>
+    useMutation<fileUploadPayload, Error, imageParamUploadPayload>({
+      mutationKey: ["addProfileImage"],
+      mutationFn: (params) => ProductService.addFileUpload(params),
+      ...opt,
+    }),
+};

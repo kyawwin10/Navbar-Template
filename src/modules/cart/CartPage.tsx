@@ -37,7 +37,7 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
   const [orderPlace, setOrderPlace] = useState("");
   // const [orderStartPoint, setOrderStartPoint] = useState("");
   // const [orderEndPoint, setOrderEndPoint] = useState("");
-  // const [paymentType, setPaymentType] = useState("CashOnDelivery");
+  const [paymentType, setPaymentType] = useState("CashOnDelivery");
   const [deliFee, setDeliFee] = useState(2000);
 
   const { mutate: confirmOrder, isPending } = addOrders.useAddOrder({
@@ -61,6 +61,7 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
 
   const handleCheckout = () => {
     if (cart.length === 0) {
+      onCartClose();
       toast.error("Your cart is empty!");
       return;
     }
@@ -77,17 +78,49 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
       orderPlace,
       orderStartPoint: "Warehouse A",
       orderEndPoint: "Customer Address",
-      paymentType: "CashOnDelivery",
+      // paymentType: "CashOnDelivery",
       // orderStartPoint,
       // orderEndPoint,
-      // paymentType,
+      paymentType,
       deliFee: 2000,
     };
     confirmOrder(payload);
     setOrderPlace("");
     // setOrderStartPoint("");
     // setOrderEndPoint("");
-    // setPaymentType("");
+    setPaymentType("");
+  };
+
+  const handleFavCheckout = () => {
+    if (cart.length === 0) {
+      onFavClose();
+      toast.error("Your cart is empty!");
+      return;
+    }
+    if (!orderPlace) {
+      toast.error("Please fill all order information!");
+      return;
+    }
+
+    const payload: orderAddPayload = {
+      orderDetails: cart.map((item) => ({
+        productId: item.productId,
+        qty: item.stockQTY,
+      })),
+      orderPlace,
+      orderStartPoint: "Warehouse A",
+      orderEndPoint: "Customer Address",
+      // paymentType: "CashOnDelivery",
+      // orderStartPoint,
+      // orderEndPoint,
+      paymentType,
+      deliFee: 2000,
+    };
+    confirmOrder(payload);
+    setOrderPlace("");
+    // setOrderStartPoint("");
+    // setOrderEndPoint("");
+    setPaymentType("");
   };
 
   return (
@@ -145,23 +178,23 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
               ))}
 
               {/* Totals */}
-              <div className="space-y-2 pt-4 border-b text-white">
+              <div className="space-y-2 pt-4 border-b text-[#731212]">
                 <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>{subTotal}</span>
+                  <span className="text-[#731212]">Subtotal</span>
+                  <span className="text-[#731212]">{subTotal}</span>
                 </div>
                 <div className="flex justify-between border-b">
-                  <span>Delivery Fee</span>
-                  <span>{deliFee}</span>
+                  <span className="text-[#731212]">Delivery Fee</span>
+                  <span className="text-[#731212]">{deliFee}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span>{total}</span>
+                  <span className="text-[#731212]">Total</span>
+                  <span className="text-[#731212]">{total}</span>
                 </div>
               </div>
 
               {/* Checkout Form */}
-              <div className="space-y-3 text-white">
+              <div className="space-y-3 text-[#731212]">
                 <div>
                   <Label className="mb-2">Order Place</Label>
 
@@ -187,7 +220,7 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
                     placeholder="Enter end point"
                   />
                 </div> */}
-                {/* <div>
+                <div>
                   <Label className="mb-2">Payment Type</Label>
                   <select
                     className="border rounded w-full p-2"
@@ -195,10 +228,10 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
                     onChange={(e) => setPaymentType(e.target.value)}
                   >
                     <option value="CashOnDelivery">Cash On Delivery</option>
-                    <option value="KBZPay">KBZ Pay</option>
-                    <option value="WavePay">Wave Pay</option>
+                    <option value="paypal">Paypal</option>
+                    <option value="stripe">Stripe</option>
                   </select>
-                </div> */}
+                </div>
                 <div>
                   <Label className="mb-2">Delivery Fee</Label>
                   <Input
@@ -227,7 +260,7 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
       <Dialog open={favouriteOpen} onOpenChange={onFavClose}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto space-y-4 bg-white rounded-2xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle>Your Favourite Product</DialogTitle>
+            <DialogTitle>Favourite Product</DialogTitle>
           </DialogHeader>
 
           {favaurite.length === 0 ? (
@@ -277,27 +310,28 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
               ))}
 
               {/* Totals */}
-              <div className="space-y-2 pt-4 border-b text-white">
+              <div className="space-y-2 pt-4 border-b text-[#731212]">
                 <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>{subTotal}</span>
+                  <span className="text-[#731212]">Subtotal</span>
+                  <span className="text-[#731212]">{subTotal}</span>
                 </div>
                 <div className="flex justify-between border-b">
-                  <span>Delivery Fee</span>
-                  <span>{deliFee}</span>
+                  <span className="text-[#731212]">Delivery Fee</span>
+                  <span className="text-[#731212]">{deliFee}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span>{total}</span>
+                  <span className="text-[#731212]">Total</span>
+                  <span className="text-[#731212]">{total}</span>
                 </div>
               </div>
 
               {/* Checkout Form */}
               <div className="space-y-3 text-white">
                 <div>
-                  <Label className="mb-2">Order Place</Label>
+                  <Label className="mb-2 text-[#731212]">Order Place</Label>
 
                   <Input
+                    className="text-[#731212]"
                     value={orderPlace}
                     onChange={(e) => setOrderPlace(e.target.value)}
                     placeholder="Enter order place"
@@ -319,21 +353,22 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
                     placeholder="Enter end point"
                   />
                 </div> */}
-                {/* <div>
-                  <Label className="mb-2">Payment Type</Label>
+                <div>
+                  <Label className="mb-2 text-[#731212]">Payment Type</Label>
                   <select
-                    className="border rounded w-full p-2"
+                    className="border rounded w-full p-2 text-[#731212]"
                     value={paymentType}
                     onChange={(e) => setPaymentType(e.target.value)}
                   >
                     <option value="CashOnDelivery">Cash On Delivery</option>
-                    <option value="KBZPay">KBZ Pay</option>
-                    <option value="WavePay">Wave Pay</option>
+                    <option value="paypal">Paypal</option>
+                    <option value="stripe">Stripe</option>
                   </select>
-                </div> */}
+                </div>
                 <div>
-                  <Label className="mb-2">Delivery Fee</Label>
+                  <Label className="mb-2 text-[#731212]">Delivery Fee</Label>
                   <Input
+                    className="text-[#731212]"
                     type="text"
                     value={deliFee}
                     onChange={(e) => setDeliFee(Number(e.target.value))}
@@ -345,7 +380,7 @@ const CartDialog: React.FC<Props> = ({ cartOpen, favouriteOpen, onCartClose, onF
                 <Button
                   className="bg-gray-300 hover:bg-gray-500 text-[#731212] text-md font-semibold px-6"
                   disabled={isPending}
-                  onClick={handleCheckout}
+                  onClick={handleFavCheckout}
                 >
                   {isPending ? "Processing..." : "Proceed to Checkout"}
                 </Button>

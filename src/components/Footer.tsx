@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <>
-      <footer className="bg-white text-[#731212] px-8 py-12">
+      <footer className="bg-black text-[#731212] px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
           <div className="flex justify-center items-center">
             <img

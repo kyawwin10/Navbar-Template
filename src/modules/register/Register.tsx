@@ -1,15 +1,11 @@
-import { userRegister, verification } from "@/api/auth/queries";
+import {
+  GoogleLoginSingup,
+  userRegister,
+  verification,
+} from "@/api/auth/queries";
 import type { registerPayload, verifyEmailPayload } from "@/api/auth/type";
 import { Button } from "@/components/ui/button";
-import {
-  Calendar,
-  Eye,
-  EyeOff,
-  ImageIcon,
-  Mail,
-  Shield,
-  User,
-} from "lucide-react";
+import { Calendar, Eye, EyeOff, Mail, User } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,23 +20,52 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { addProfileImage } from "@/api/product/queries";
+import { GoogleLogin } from "@react-oauth/google";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
+
+  // form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
   const [age, setAge] = useState<number | "">("");
-  const [roleName, setRoleName] = useState("");
-  const [profileImageUrl, setProfileImageUrl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  // image states
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+
+  // otp states
   const [otp, setOtp] = useState("");
   const [isVerificationDialogOpen, setIsVerificationDialogOpen] =
     useState(false);
 
+  // 🔹 upload mutation
+  const uploadMutation = addProfileImage.useMutation({
+    onSuccess: (data) => {
+      setProfileImageUrl(data.url); // save backend url
+    },
+    onError: (err) => {
+      console.error("Upload failed:", err);
+      alert("Image upload failed!");
+    },
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfileImage(file);
+      uploadMutation.mutate({ image: file });
+    }
+  };
+
   const registerMutation = userRegister.useMutation({
     onSuccess: () => {
-      setIsVerificationDialogOpen(true); // Show verification dialog
+      setIsVerificationDialogOpen(true);
       alert(
         "Registration successful! Please verify your email with the OTP sent to your inbox."
       );
@@ -52,16 +77,15 @@ const Register = () => {
   });
 
   const registerClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     const payload: registerPayload = {
       email,
       password,
       userName,
       age: age || 0,
-      roleName,
-      profileImageUrl,
+      profileImageUrl: profileImageUrl || "",
     };
-    console.log("Register:", payload);
+    console.log("Register payload:", payload);
     registerMutation.mutate(payload);
   };
 
@@ -83,11 +107,24 @@ const Register = () => {
       alert("Please enter a 6-digit OTP.");
       return;
     }
-    const payload: verifyEmailPayload = {
-      email,
-      otp: otp,
-    };
+    const payload: verifyEmailPayload = { email, otp };
     verificationMutation.mutate(payload);
+  };
+
+  const googleLoginMutation = GoogleLoginSingup.useMutation({
+    onSuccess: (data) => {
+      Cookies.set("token", data.token);
+      navigate("/home");
+      toast.success("Google Login Successfully");
+    },
+    onError: () => {
+      alert("Google Login Failed! Please Try Again");
+      toast.error("Google Login Failed! Please Try Again");
+    },
+  });
+
+  const googleLogin = async (token: string) => {
+    googleLoginMutation.mutate({ token });
   };
 
   return (
@@ -161,33 +198,42 @@ const Register = () => {
             />
           </div>
 
-          {/* Role */}
-          <div className="relative">
-            <Shield className="absolute left-3 top-3 text-gray-400" size={18} />
-            <input
-              type="text"
-              placeholder="Role Name"
-              className="w-full pl-10 p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-              value={roleName}
-              onChange={(e) => setRoleName(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Image */}
-          <div className="relative">
-            <ImageIcon
+          {/* Image Upload */}
+          <div className="relative w-full mt-6">
+            {/* <ImageIcon
               className="absolute left-3 top-3 text-gray-400"
               size={18}
-            />
+            /> */}
+            <label
+              htmlFor="file-upload"
+              className="cursor-pointer bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-md shadow transition"
+            >
+              Choose File
+            </label>
             <input
-              type="text"
-              placeholder="Profile Image URL"
-              className="w-full pl-10 p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-              value={profileImageUrl}
-              onChange={(e) => setProfileImageUrl(e.target.value)}
+              id="file-upload"
+              type="file"
+              onChange={handleFileChange}
+              className="hidden"
               required
             />
+            <span id="file-name" className="text-gray-700 text-sm ml-10">
+              No file chosen
+            </span>
+
+            {uploadMutation.isPending && (
+              <p className="text-sm text-blue-500 mt-2">Uploading...</p>
+            )}
+
+            {/* {profileImageUrl && (
+              <div className="mt-3">
+                <img
+                  src={profileImageUrl}
+                  alt="Uploaded Preview"
+                  className="w-24 h-24 object-cover rounded-lg border"
+                />
+              </div>
+            )} */}
           </div>
 
           {/* Register Button */}
@@ -196,7 +242,7 @@ const Register = () => {
               type="button"
               onClick={registerClick}
               disabled={registerMutation.isPending}
-              className="w-44 rounded-xl"
+              className="w-full p-4 rounded-xl"
             >
               {registerMutation.isPending ? "Registering..." : "Register"}
             </Button>
@@ -210,19 +256,15 @@ const Register = () => {
           </div>
 
           {/* Google Sign-In */}
-          <Button
-            type="button"
-            className="w-full flex items-center justify-center space-x-2 bg-white border text-gray-700 hover:bg-gray-100 rounded-xl"
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-5 h-5"
-            />
-            <span>Sign in with Google</span>
-          </Button>
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              googleLogin(credentialResponse.credential || "");
+            }}
+            onError={() => toast.error("Google Login Failed!")}
+          />
         </form>
 
+        {/* OTP Dialog */}
         <AlertDialog
           open={isVerificationDialogOpen}
           onOpenChange={setIsVerificationDialogOpen}
@@ -245,30 +287,13 @@ const Register = () => {
                 onChange={(value) => setOtp(value)}
               >
                 <InputOTPGroup>
-                  <InputOTPSlot
-                    className="w-12 h-12 text-lg rounded-md"
-                    index={0}
-                  />
-                  <InputOTPSlot
-                    className="w-12 h-12 text-lg rounded-md"
-                    index={1}
-                  />
-                  <InputOTPSlot
-                    className="w-12 h-12 text-lg rounded-md"
-                    index={2}
-                  />
-                  <InputOTPSlot
-                    className="w-12 h-12 text-lg rounded-md"
-                    index={3}
-                  />
-                  <InputOTPSlot
-                    className="w-12 h-12 text-lg rounded-md"
-                    index={4}
-                  />
-                  <InputOTPSlot
-                    className="w-12 h-12 text-lg rounded-md"
-                    index={5}
-                  />
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <InputOTPSlot
+                      key={i}
+                      className="w-12 h-12 text-lg rounded-md"
+                      index={i}
+                    />
+                  ))}
                 </InputOTPGroup>
               </InputOTP>
             </div>

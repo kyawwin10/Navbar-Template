@@ -8,7 +8,6 @@ export type registerPayload = {
   password: string
   userName: string
   age: number
-  roleName: string
   profileImageUrl: string
 }
 

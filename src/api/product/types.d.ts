@@ -25,3 +25,11 @@ export type CategoryInstance = {
   catInstanceName: string;
   products: Product[];
 };
+
+export type imageParamUploadPayload = {
+  image: File
+}
+
+export type fileUploadPayload = {
+  url: string
+}

@@ -26,7 +26,7 @@ const Login = () => {
       Cookies.set("token", data.token, { expires: 1, path: "" });
       Cookies.set("userName", data.userName, { expires: 1, path: "" });
       Cookies.set("roleName", data.roleName, { expires: 1, path: "" });
-      navigate("/");
+      navigate("/home");
       alert("Login Successfully");
       console.log(data.message);
       console.log("Token", data.token);
@@ -49,7 +49,7 @@ const Login = () => {
   const googleLoginMutation = GoogleLoginSingup.useMutation({
     onSuccess: (data) => {
       Cookies.set("token", data.token);
-      navigate("/");
+      navigate("/home");
       toast.success("Google Login Successfully");
     },
     onError: () => {
@@ -133,22 +133,10 @@ const Login = () => {
           {/* Google Login */}
           <GoogleLogin
             onSuccess={(credentialResponse) => {
-              // googleLogin(credentialResponse?.credential || "");
-              // if (credentialResponse.credential) {
                 googleLogin(credentialResponse.credential || "");
-              // } else {
-              //   toast.error("No credential returned from Google.");
-              // }
             }}
             onError={() => toast.error("Google Login Failed!")}
           />
-          {/* <button
-            type="button"
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 py-2 text-gray-700 hover:bg-gray-100 transition"
-          >
-            <img src="/image/google.jpg" width={28} height={28} alt="google" />
-            <span className="text-sm font-medium">Login with Google</span>
-          </button> */}
 
           {/* Register */}
           <p className="mt-6 text-center text-sm text-gray-600">

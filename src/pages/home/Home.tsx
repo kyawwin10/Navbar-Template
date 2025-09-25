@@ -1,10 +1,13 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { RxDotFilled } from "react-icons/rx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Marquee from "react-fast-marquee";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const images = [
     { src: "/image/LuxeLook10.png" },
     { src: "/image/luxelook2.jpg" },
@@ -66,6 +69,10 @@ const Home: React.FC = () => {
     setCurrentIndex(slideIndex);
   };
 
+  const shopClick = () => {
+    navigate("/productlist")
+  }
+
   return (
     <>
       <div className="max-w-full h-[510px] w-full m-auto relative group mb-5">
@@ -103,8 +110,49 @@ const Home: React.FC = () => {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+        {/* Card 1 */}
+        <Card className="flex flex-col md:flex-row items-center md:items-start justify-between p-6 bg-[#f5e9dc] shadow">
+          <CardContent className="flex-1 space-y-3 mt-8">
+            <p className="text-sm font-medium text-gray-600">500000MMK Buy</p>
+            <p className="text-sm font-medium text-gray-600">Delivery Free 1 time</p>
+            <h2 className="text-xl font-semibold">Cosmetic Skin Perfectly</h2>
+            <Button onClick={shopClick} className="bg-pink-700 hover:bg-pink-800 text-white rounded-full px-6 mt-4">
+              Shop Now
+            </Button>
+          </CardContent>
+          <div className="mt-4 h-full md:mt-0 md:ml-4 flex-shrink-0">
+            <img
+              src="/image/hair.jpg"
+              alt="image"
+              className="w-50 md:w-48 object-contain"
+            />
+          </div>
+        </Card>
+
+        {/* Card 2 */}
+        <Card className="flex flex-col md:flex-row items-center md:items-start justify-between p-6 bg-[#f5e9dc] shadow">
+          <CardContent className="flex-1 space-y-3 mt-14">
+            <p className="text-sm font-medium text-gray-600">15% Discount</p>
+            <h2 className="text-xl font-semibold">Hydrated Skin Perfectly</h2>
+            <Button className="bg-pink-700 hover:bg-pink-800 text-white rounded-full px-6 mt-6">
+              Shop Now
+            </Button>
+          </CardContent>
+          <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
+            <img
+              src="/image/hair.jpg"
+              alt="Hydrated Skin"
+              className="w-40 md:w-48 object-contain"
+            />
+          </div>
+        </Card>
+      </div>
+
       <div className="flex justify-center items-center gap-4 my-10">
-        <div className="text-md font-semibold">New Arrival</div>
+        <div className="text-md font-semibold bg-[#731212] text-white p-1 rounded cursor-pointer hover:bg-[#922222] transition-colors">
+          New Arrival
+        </div>
         <div className="text-md font-semibold">BestSeller</div>
         <div className="text-md font-semibold">Special</div>
       </div>

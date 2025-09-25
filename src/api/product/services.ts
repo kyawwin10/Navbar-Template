@@ -1,5 +1,5 @@
 import { axiosInstance } from "../axiosInstance";
-import type { getAllProductPayload, productGetByIdPayload, productPayload } from "./types";
+import type { fileUploadPayload, getAllProductPayload, imageParamUploadPayload, productGetByIdPayload, productPayload } from "./types";
 
 const baseURL = '/api';
 
@@ -13,4 +13,18 @@ export const getByIdProduct = async (params: productGetByIdPayload) : Promise<pr
     return response.data.data;
 }
 
-export default { getAllProduct, getByIdProduct }
+export const addFileUpload = async (params: imageParamUploadPayload): Promise<fileUploadPayload> => {
+  const formData = new FormData();
+  formData.append("image", params.image);
+
+  const response = await axiosInstance.post<fileUploadPayload>(`${baseURL}/Product/upload`,formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+
+export default { getAllProduct, getByIdProduct, addFileUpload }
