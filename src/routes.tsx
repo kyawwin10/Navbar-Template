@@ -3,11 +3,13 @@ import About from "./pages/about/About";
 import ProductList from "./modules/product/ProductList";
 import Doctors from "./modules/doctor/Doctors";
 import Home from "./pages/home/Home";
+import Order from "./modules/order/Order";
 
 export const routes: RouteObject[] = [
   { path: "/home", element: <Home /> },
   { path: "/about", element: <About /> },
   {path: "/productlist", element: <ProductList />},
   // {path: "/booking", element: <Booking />},
-  {path: "/doctorlist", element: <Doctors />}
+  {path: "/doctorlist", element: <Doctors />},
+  {path: "/order", element: <Order />},
 ];

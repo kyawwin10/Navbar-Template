@@ -3,9 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import React, { useState } from "react";
@@ -44,12 +42,6 @@ const Navbar: React.FC = () => {
     isError,
   } = getCategoryList.useQuery();
 
-  const flags = [
-    { src: "image/usa_flag.webp", label: "English" },
-    { src: "image/old_burmese_flag.png", label: "မြန်မာဘာသာ" },
-  ];
-
-  const [selectedFlag, setSelectedFlag] = useState(flags[0]);
   const [openCatId, setOpenCatId] = useState<string | null>(null);
   const logoutClick = () => {
     Cookies.remove("token");
@@ -86,9 +78,9 @@ const Navbar: React.FC = () => {
             </a>
           </div>
 
-          <div className="flex-1 max-w-[250px] mx-6 text-2xl font-semibold text-[#731212]">
+          <h1 className="flex-1 max-w-[250px] mx-6 text-2xl font-semibold italic text-[#731212]">
             Luxe Look
-          </div>
+          </h1>
 
           <div className="flex items-center space-x-5">
             <div className="flex items-center bg-white rounded-2xl my-2 py-1 px-4">
@@ -103,37 +95,6 @@ const Navbar: React.FC = () => {
                 <Search className="h-4 w-4" />
               </button>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <img
-                  className="w-6 h-4 cursor-pointer"
-                  src={selectedFlag.src}
-                  alt={selectedFlag.label}
-                />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-48" align="center">
-                <DropdownMenuGroup>
-                  {flags.map((flag) => (
-                    <DropdownMenuItem
-                      key={flag.label}
-                      className={`mb-2 flex justify-around p-4 cursor-pointer ${
-                        selectedFlag.label === flag.label
-                          ? "bg-gray-200"
-                          : "hover:bg-gray-100"
-                      }`}
-                      onClick={() => setSelectedFlag(flag)}
-                    >
-                      <img
-                        className="w-6 h-4"
-                        src={flag.src}
-                        alt={flag.label}
-                      />
-                      <DropdownMenuShortcut>{flag.label}</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             <button className="hover:text-gray-600 relative">
               <Heart

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, type UseMutationOptions, type UseQueryOptions } from "@tanstack/react-query";
-import type { fileUploadPayload, getAllProductPayload, imageParamUploadPayload, productGetByIdPayload, productPayload } from "./types";
+import type { fileUploadPayload, getAllProductPayload, imageParamUploadPayload, productGetByIdPayload, productPayload, statusProductPayload } from "./types";
 import ProductService from "./services";
 
 // export const getCategoryList = {
@@ -19,6 +19,18 @@ export const getProductList = {
     useQuery({
       queryKey: ["getProductList", params],
       queryFn: () => ProductService.getAllProduct(params),
+      ...opt,
+    }),
+};
+
+export const getStatusProductList = {
+  useQuery: (
+    params: statusProductPayload,
+    opt?: UseQueryOptions<productPayload[]>
+  ) =>
+    useQuery({
+      queryKey: ["getStatusProductList", params],
+      queryFn: () => ProductService.getStatusProduct(params),
       ...opt,
     }),
 };

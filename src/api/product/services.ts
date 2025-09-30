@@ -1,10 +1,15 @@
 import { axiosInstance } from "../axiosInstance";
-import type { fileUploadPayload, getAllProductPayload, imageParamUploadPayload, productGetByIdPayload, productPayload } from "./types";
+import type { fileUploadPayload, getAllProductPayload, imageParamUploadPayload, productGetByIdPayload, productPayload, statusProductPayload } from "./types";
 
 const baseURL = '/api';
 
 export const getAllProduct = async (params: getAllProductPayload ) : Promise<productPayload[]> => {
     const response = await axiosInstance.get(`${baseURL}/Product`, { params });
+    return response.data.data;
+}
+
+export const getStatusProduct = async (params: statusProductPayload) : Promise<productPayload[]> => {
+    const response = await axiosInstance.get(`${baseURL}/Product/bystatus`, { params });
     return response.data.data;
 }
 
@@ -27,4 +32,4 @@ export const addFileUpload = async (params: imageParamUploadPayload): Promise<fi
   return response.data;
 };
 
-export default { getAllProduct, getByIdProduct, addFileUpload }
+export default { getAllProduct, getByIdProduct, addFileUpload, getStatusProduct }

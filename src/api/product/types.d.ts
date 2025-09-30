@@ -4,6 +4,13 @@ export type getAllProductPayload = {
     language: string
 }
 
+export type statusProductPayload = {
+  pageNumber: number;
+  pageSize: number;
+  language: string;
+  status: string;
+}
+
 export type productPayload = {
   productId: string;
   catInstanceName: string;
@@ -23,7 +30,6 @@ export type productGetByIdPayload = {
 
 export type CategoryInstance = {
   catInstanceName: string;
-  products: Product[];
 };
 
 export type imageParamUploadPayload = {

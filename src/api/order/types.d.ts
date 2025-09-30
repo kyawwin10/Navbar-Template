@@ -5,9 +5,12 @@ export type orderDetailsPayload = {
 
 export type orderAddPayload = {
   orderDetails: orderDetailsPayload[];
-  orderPlace: string;
-  orderStartPoint: string;
-  orderEndPoint: string;
+  fullName: string;
+  region: string;
+  phoneNumber: string;
+  city: string;
+  township: string;
+  address: string;
   paymentType: string;
   deliFee: number;
 };
