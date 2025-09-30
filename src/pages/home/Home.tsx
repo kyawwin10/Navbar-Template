@@ -32,6 +32,8 @@ const Home: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [language, setLanguage] = useState<string>("us");
   const [status, setStatus] = useState<string>("NewArrival");
+  const [likedProducts, setLikedProducts] = useState<string[]>([]);
+
   const [selectProductId, setSelectProductId] = useState<string | null>("");
   const catId = location.state?.catId || null;
 
@@ -145,6 +147,11 @@ const Home: React.FC = () => {
     };
     dispatch(addToFavourites(payload));
     addToFavourite([{ productId: product.productId, qty: 1 }]);
+    setLikedProducts((prev) =>
+      prev.includes(product.productId)
+        ? prev.filter((id) => id !== product.productId)
+        : [...prev, product.productId]
+    );
   };
 
   const { mutate: addToFavourite } = favouriteOrderDetails.useAddToFavourite({
@@ -393,6 +400,16 @@ const Home: React.FC = () => {
                       onClick={() => addToFavouriteClick(product)}
                       className="cursor-pointer"
                       size={18}
+                      color={
+                        likedProducts.includes(product.productId)
+                          ? "red"
+                          : "currentColor"
+                      }
+                      fill={
+                        likedProducts.includes(product.productId)
+                          ? "red"
+                          : "none"
+                      }
                     />
                     <Button
                       disabled={isPending}
