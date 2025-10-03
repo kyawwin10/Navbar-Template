@@ -1,5 +1,7 @@
 import { GoogleLoginSingup, userLogin } from "@/api/auth/queries";
 import type { loginPayload } from "@/api/auth/type";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { GoogleLogin } from "@react-oauth/google";
 import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react";
@@ -24,6 +26,7 @@ const Login = () => {
   const loginMutation = userLogin.useMutation({
     onSuccess: (data) => {
       Cookies.set("token", data.token, { expires: 1, path: "" });
+      Cookies.set("profileImageUrl", data.profileImageUrl, { expires: 1, path: "" });
       Cookies.set("userName", data.userName, { expires: 1, path: "" });
       Cookies.set("roleName", data.roleName, { expires: 1, path: "" });
       navigate("/home");
@@ -64,31 +67,31 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex min-h-screen items-center justify-center">
-        <form className="shadow-lg rounded-xl p-8 w-[400px] sm:w-[450px]">
-          <div className="flex justify-center">
-            <img src="/image/logo.png" width={100} height={80} alt="logo" />
+      <div className="flex min-h-screen w-[40%] items-center justify-center">
+        <form className="shadow-lg bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 rounded-xl p-6 w-full sm:w-[450px]">
+          <div className="flex justify-center mb-4">
+            <img src="/image/LuxeLookLogo.jpg" className="w-20 h-20 rounded md:rounded-full " alt="logo" />
           </div>
 
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
             Login
           </h2>
           <div className="relative mb-4">
-            <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
+            <span className="absolute inset-y-0 left-3 flex items-center text-[#731212]">
               <i className="pi pi-at"></i>
             </span>
-            <input
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={keyEnter}
               placeholder="Enter Email"
-              className="w-full rounded-lg border border-gray-300 py-2 pl-2 pr-2 text-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+              className="w-full rounded-lg py-2 pl-2 pr-2 text-sm"
             />
           </div>
 
           <div className="relative mb-4">
-            <input
+            <Input
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -115,13 +118,13 @@ const Login = () => {
           </div>
 
           {/* Login Button */}
-          <button
+          <Button
             type="button"
             onClick={loginClick}
-            className="w-full rounded-lg bg-blue-600 py-2 text-white font-semibold hover:bg-blue-700 transition"
+            className="w-full rounded-lg py-2 text-white font-semibold transition"
           >
             Login
-          </button>
+          </Button>
 
           {/* OR Divider */}
           <div className="flex items-center my-6">

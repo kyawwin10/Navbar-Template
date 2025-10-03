@@ -104,7 +104,7 @@ const Home: React.FC = () => {
     }
   };
 
-  const { mutate: addToCart, isPending } = orderDetails.useAddToCart({
+  const { mutate: addToCart } = orderDetails.useAddToCart({
     onSuccess: () => {
       toast.success("Added to cart!");
     },
@@ -251,7 +251,6 @@ const Home: React.FC = () => {
     navigate("/productlist");
   };
 
-  if (isPending) return <span>Loading...</span>;
   if (error) return <span>Oops!</span>;
 
   return (
@@ -335,7 +334,7 @@ const Home: React.FC = () => {
         </Card>
       </div>
 
-      <div className="flex justify-center items-center gap-8 my-10">
+      <div className="flex justify-center items-center gap-8 my-6">
         {["NewArrival", "Special"].map((s) => (
           <div
             key={s}
@@ -412,7 +411,6 @@ const Home: React.FC = () => {
                       }
                     />
                     <Button
-                      disabled={isPending}
                       className="text-white rounded px-3 py-1 text-sm"
                       onClick={() => addToCartClick(product)}
                     >

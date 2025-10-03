@@ -170,7 +170,7 @@ const CartDialog: React.FC<Props> = ({
                       </p>
                     </div>
                     <p className="text-md font-semibold text-[#731212]">
-                      {item.price} {item.currencySymbol} × {item.stockQTY}
+                      {item.price} × {item.stockQTY}
                     </p>
                   </div>
 
@@ -297,7 +297,7 @@ const CartDialog: React.FC<Props> = ({
                       {item.productName}
                     </p>
                     <p className="text-md font-semibold text-[#731212]">
-                      {item.price} {item.currencySymbol} × {item.stockQTY}
+                      {item.price} × {item.stockQTY}
                     </p>
                   </div>
 

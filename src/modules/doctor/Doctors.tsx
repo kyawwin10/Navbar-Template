@@ -1,6 +1,5 @@
 import { getDoctorList } from "@/api/doctor/queries";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { MapPinHouse, Phone } from "lucide-react";
 import React from "react";
 
 const Doctors: React.FC = () => {
@@ -18,44 +17,45 @@ const Doctors: React.FC = () => {
     );
   return (
     <>
-      <div className="w-[75%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
         {doctorsList.map((doctor, index) => (
-          <Card
+          <div
             key={index}
-            className="rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300"
+            className="flex flex-col md:flex-row bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
           >
-            <CardHeader className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center justify-center bg-gray-50 md:w-1/2 p-6">
               <img
-                // src={doctor.profileImageUrl}
                 src="/image/LuxeLookLogo.jpg"
+                // src={doctor.profileImageUrl}
                 alt="image"
-                className="w-24 h-24 rounded-full object-cover shadow-md mb-3"
+                className="w-32 h-32 object-cover shadow-lg mb-4"
               />
-              <CardTitle className="text-xl font-semibold text-gray-800">
+              <h2 className="text-md font-semibold text-gray-800">
                 {doctor.name}
-              </CardTitle>
-              <p className="text-sm text-gray-500 font-semibold">
-                {doctor.description}
-              </p>
-            </CardHeader>
+              </h2>
+              <p className="text-sm text-gray-500">{doctor.description}</p>
+            </div>
 
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MapPin className="w-4 h-4 text-gray-400" />
-                <span>
-                  {doctor.storeposition}, {doctor.storeName}
-                </span>
+            <div className="relative bg-gray-900 text-white md:w-1/2 p-6 space-y-4">
+              <div>
+                <h3 className="text-lg font-bold mb-2">Contact</h3>
+                <div className="flex justify-between items-center">
+                  <Phone className="inline-block mr-2" size={16} />
+                  <span>{doctor.phoneNumber}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Phone className="w-4 h-4 text-gray-400" />
-                <span>{doctor.phoneNumber}</span>
+
+              <div>
+                <h3 className="text-lg font-bold mb-2">Address</h3>
+                <div className="flex justify-between items-center">
+                  <MapPinHouse className="inline-block mr-2" size={16} />
+                  <p className="text-gray-300">
+                    {doctor.storeposition}, {doctor.storeName}
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Mail className="w-4 h-4 text-gray-400" />
-                <span>{doctor.email}</span>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
     </>

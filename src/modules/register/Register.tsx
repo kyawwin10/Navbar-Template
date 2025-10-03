@@ -38,6 +38,8 @@ const Register = () => {
   // image states
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [profileImageName, setProfileImageName] =
+    useState<string>("No file chosen");
 
   // otp states
   const [otp, setOtp] = useState("");
@@ -47,7 +49,7 @@ const Register = () => {
   // 🔹 upload mutation
   const uploadMutation = addProfileImage.useMutation({
     onSuccess: (data) => {
-      setProfileImageUrl(data.url); // save backend url
+      setProfileImageUrl(data.url);
     },
     onError: (err) => {
       console.error("Upload failed:", err);
@@ -59,7 +61,11 @@ const Register = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setProfileImage(file);
+      setProfileImageName(file.name);
       uploadMutation.mutate({ image: file });
+    } else {
+      setProfileImage(null);
+      setProfileImageName("No file chosen");
     }
   };
 
@@ -128,9 +134,16 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen w-[28%] flex items-center justify-center bg-gray-100">
-      <div className="w-full bg-white p-4 rounded-2xl shadow-xl">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+    <div className="min-h-screen w-[40%] flex items-center justify-center bg-gray-100">
+      <div className="bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-4 rounded-2xl shadow-xl w-full sm:w-[450px]">
+        <div className="flex justify-center mb-2">
+          <img
+            src="/image/LuxeLookLogo.jpg"
+            className="w-20 h-20 rounded md:rounded-full "
+            alt="logo"
+          />
+        </div>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
           Create an Account
         </h2>
 
@@ -200,10 +213,6 @@ const Register = () => {
 
           {/* Image Upload */}
           <div className="relative w-full mt-6">
-            {/* <ImageIcon
-              className="absolute left-3 top-3 text-gray-400"
-              size={18}
-            /> */}
             <label
               htmlFor="file-upload"
               className="cursor-pointer bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-md shadow transition"
@@ -213,27 +222,28 @@ const Register = () => {
             <input
               id="file-upload"
               type="file"
+              accept="image/*"
               onChange={handleFileChange}
               className="hidden"
               required
             />
             <span id="file-name" className="text-gray-700 text-sm ml-10">
-              No file chosen
+              {profileImageName}
             </span>
+
+            {profileImage && (
+              <div className="mt-3">
+                <img
+                  src={URL.createObjectURL(profileImage)}
+                  alt="image"
+                  className="w-24 h-20 object-cover rounded-md border"
+                />
+              </div>
+            )}
 
             {uploadMutation.isPending && (
               <p className="text-sm text-blue-500 mt-2">Uploading...</p>
             )}
-
-            {/* {profileImageUrl && (
-              <div className="mt-3">
-                <img
-                  src={profileImageUrl}
-                  alt="Uploaded Preview"
-                  className="w-24 h-24 object-cover rounded-lg border"
-                />
-              </div>
-            )} */}
           </div>
 
           {/* Register Button */}
@@ -242,7 +252,7 @@ const Register = () => {
               type="button"
               onClick={registerClick}
               disabled={registerMutation.isPending}
-              className="w-full p-4 rounded-xl"
+              className="w-full p-5 rounded"
             >
               {registerMutation.isPending ? "Registering..." : "Register"}
             </Button>

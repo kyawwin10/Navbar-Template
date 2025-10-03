@@ -77,6 +77,11 @@ const Order: React.FC = () => {
     addOrder(payload);
   };
 
+  // Calculate if free delivery applies
+  const isFreeDelivery = subTotal >= 500000;
+  const finalDeliFee = isFreeDelivery ? 0 : deliFee;
+  const total = subTotal + finalDeliFee;
+
   return (
     <>
       <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -228,12 +233,19 @@ const Order: React.FC = () => {
               <span>{subTotal}</span>
             </div>
             <div className="flex justify-between text-[#731212] font-semibold text-md">
-              <span>Delivery Fee</span>
-              <span>{deliFee}</span>
+              <span className="basis-[65%]">
+                Delivery Fee
+                {isFreeDelivery && (
+                  <span className="ml-2 text-green-600 font-normal text-sm">
+                    (Free delivery for orders over 500,000)
+                  </span>
+                )}
+              </span>
+              <span className="basis-[35%] flex justify-end">{finalDeliFee}</span>
             </div>
             <div className="flex justify-between font-semibold text-[#731212] text-md mt-2">
               <span>Total</span>
-              <span>{subTotal + deliFee}</span>
+              <span>{total}</span>
             </div>
           </div>
           <div>

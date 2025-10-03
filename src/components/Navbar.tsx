@@ -18,6 +18,7 @@ import type { RootState } from "@/store";
 import CartPage from "@/modules/cart/CartPage";
 
 const Navbar: React.FC = () => {
+  const profileImageUrl = Cookies.get("profileImage");
   const [cartIconOpen, setCartIconOpen] = useState(false);
   const [favouriteIconOpen, setFavouriteIconOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -127,7 +128,18 @@ const Navbar: React.FC = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger className="hover:text-gray-600">
-                <User className="h-6 w-6" />
+                {profileImageUrl ? (
+                  <img
+                    src={profileImageUrl}
+                    alt="Profile"
+                    className="h-9 w-9 rounded-full object-cover shadow-md"
+                    style={{ backgroundColor: "#eee" }}
+                  />
+                ) : (
+                  <div className="h-9 w-9 rounded-full bg-[#eee] flex items-center justify-center border-2 border-[#731212] shadow-md">
+                    <User className="h-6 w-6 text-[#731212]" />
+                  </div>
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={logoutClick}>
