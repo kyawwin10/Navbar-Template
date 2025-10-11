@@ -151,55 +151,69 @@ const CartDialog: React.FC<Props> = ({
           ) : (
             <>
               {/* Cart Items */}
-              {cart.map((item) => (
-                <div
-                  key={item.productId}
-                  className="flex justify-between items-center border-b"
-                >
-                  <div>
-                    <div className="flex flex-row items-center space-x-4">
-                      <img
-                        src="/image/p1.jpg"
-                        // src={item.productImageUrl}
-                        alt="image"
-                        className="w-16 h-16 rounded-md border"
-                      />
+              {cart.map((item) => {
+                // Calculate discount if available
+                const hasDiscount = item.discount && item.discount > 0;
+                const discountAmount = hasDiscount ? item.price * (item.discount / 100) : 0;
+                const discountedPrice = hasDiscount ? item.price - discountAmount : item.price;
 
-                      <p className="font-semibold text-[#731212]">
-                        {item.productName}
+                return (
+                  <div
+                    key={item.productId}
+                    className="flex justify-between items-center border-b"
+                  >
+                    <div>
+                      <div className="flex flex-row items-center space-x-4">
+                        <img
+                          src="/image/p1.jpg"
+                          // src={item.productImageUrl}
+                          alt="image"
+                          className="w-16 h-16 rounded-md border"
+                        />
+
+                        <p className="font-semibold text-[#731212]">
+                          {item.productName}
+                        </p>
+                      </div>
+                      
+                      <p className="text-md font-semibold text-[#731212]">
+                        {discountedPrice} × {item.stockQTY}
                       </p>
+                      
+                      {hasDiscount && (
+                        <p className="text-xs text-green-600 font-semibold">
+                          Discount: {item.discount}% (-{discountAmount.toLocaleString()} Ks)
+                        </p>
+                      )}
                     </div>
-                    <p className="text-md font-semibold text-[#731212]">
-                      {item.price} × {item.stockQTY}
-                    </p>
-                  </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => dispatch(decreaseQty(item.productId))}
-                    >
-                      <CircleMinus />
-                    </Button>
-                    <span>{item.stockQTY}</span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => dispatch(increaseQty(item.productId))}
-                    >
-                      <CirclePlus />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => dispatch(removeFromCart(item.productId))}
-                    >
-                      Remove
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => dispatch(decreaseQty(item.productId))}
+                      >
+                        <CircleMinus />
+                      </Button>
+                      <span>{item.stockQTY}</span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => dispatch(increaseQty(item.productId))}
+                      >
+                        <CirclePlus />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => dispatch(removeFromCart(item.productId))}
+                      >
+                        Remove
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {/* Totals */}
               <div className="flex justify-between">

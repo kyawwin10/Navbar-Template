@@ -33,6 +33,7 @@ const Home: React.FC = () => {
   const [language, setLanguage] = useState<string>("us");
   const [status, setStatus] = useState<string>("NewArrival");
   const [likedProducts, setLikedProducts] = useState<string[]>([]);
+  const [showDiscountProducts, setShowDiscountProducts] = useState(false);
 
   const [selectProductId, setSelectProductId] = useState<string | null>("");
   const catId = location.state?.catId || null;
@@ -90,6 +91,7 @@ const Home: React.FC = () => {
     debouncedSetStatus(value);
     setStatus(value);
     setPageNumber(1);
+    setShowDiscountProducts(false);
   };
 
   const { data: productById, isLoading: productDetailsLoading } =
@@ -122,6 +124,7 @@ const Home: React.FC = () => {
       productDescription: product.productDescription,
       cost: product.cost ?? 0,
       price: product.price,
+      discount: product.discount,
       currencySymbol: product.currencySymbol,
       productImageUrl: product.productImageUrl,
       qty: 1,
@@ -171,6 +174,12 @@ const Home: React.FC = () => {
     setSelectProductId("");
   };
 
+  const shopDiscountClick = () => {
+    setShowDiscountProducts(true);
+    setStatus(""); // Optionally clear status filter
+    setPageNumber(1);
+  };
+
   let filteredData;
   if (selectedProductID && productById) {
     filteredData = [productById];
@@ -184,6 +193,11 @@ const Home: React.FC = () => {
     filteredData = filteredData.filter((p: productPayload) =>
       p.productName.toLowerCase().includes(search.toLowerCase())
     );
+  }
+
+  // Add this filter for discount products:
+  if (showDiscountProducts && filteredData) {
+    filteredData = filteredData.filter((p: productPayload) => p.discount > 0);
   }
 
   const images = [
@@ -320,7 +334,10 @@ const Home: React.FC = () => {
           <CardContent className="flex-1 space-y-3 mt-14">
             <p className="text-sm font-medium text-gray-600">15% Discount</p>
             <h2 className="text-xl font-semibold">Hydrated Skin Perfectly</h2>
-            <Button className="bg-pink-700 hover:bg-pink-800 text-white rounded-full px-6 mt-6">
+            <Button
+              className="bg-pink-700 hover:bg-pink-800 text-white rounded-full px-6 mt-6"
+              onClick={shopDiscountClick}
+            >
               Shop Now
             </Button>
           </CardContent>
@@ -386,12 +403,40 @@ const Home: React.FC = () => {
                     {product.productDescription}
                   </p>
 
-                  <p className="text-base font-bold mt-1">
-                    {product.currencySymbol}
-                    {product.price.toFixed(2)}
-                  </p>
+                  <div className="mt-1">
+                    {product.discount > 0 && showDiscountProducts ? (
+                      <div className="flex flex-col items-center w-full">
+                        <span className="text-base font-bold text-[#d72660]">
+                          {product.currencySymbol}
+                          {(
+                            product.price -
+                            product.price * (product.discount / 100)
+                          ).toLocaleString()}
+                        </span>
+                        <span className="text-xs text-gray-400 line-through">
+                          {product.currencySymbol}
+                          {product.price.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-[#d72660] font-semibold mt-1">
+                          {product.discount}% OFF &middot; Save{" "}
+                          {(
+                            product.price * (product.discount / 100)
+                          ).toLocaleString()}{" "}
+                          {product.currencySymbol}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-base font-bold">
+                        {product.currencySymbol}
+                        {product.price.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500">
                     In Stock: {product.stockQTY}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {product.discount > 0 && <>Discount: {product.discount}%</>}
                   </p>
 
                   <div className="flex justify-center items-center gap-3 mt-2">
@@ -478,6 +523,9 @@ const Home: React.FC = () => {
                         </p>
                         <p className="text-sm text-gray-500">
                           In Stock: {productById.stockQTY}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Discount: {productById.discount}%{" "}
                         </p>
 
                         <div className="flex gap-3 mt-4">

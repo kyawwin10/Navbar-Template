@@ -18,7 +18,7 @@ import type { RootState } from "@/store";
 import CartPage from "@/modules/cart/CartPage";
 
 const Navbar: React.FC = () => {
-  const profileImageUrl = Cookies.get("profileImage");
+  const profileImageUrl = Cookies.get("profileImageUrl"); // <-- Fix: use correct cookie key
   const [cartIconOpen, setCartIconOpen] = useState(false);
   const [favouriteIconOpen, setFavouriteIconOpen] = useState(false);
   const [search, setSearch] = useState("");

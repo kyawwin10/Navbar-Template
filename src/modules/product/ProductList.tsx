@@ -108,6 +108,7 @@ const ProductList: React.FC = () => {
       productDescription: product.productDescription,
       cost: product.cost ?? 0,
       price: product.price,
+      discount: product.discount,
       currencySymbol: product.currencySymbol,
       productImageUrl: product.productImageUrl,
       qty: 1,
@@ -222,6 +223,9 @@ const ProductList: React.FC = () => {
                 </p>
                 <p className="text-xs text-gray-500">
                   In Stock: {product.stockQTY}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {product.discount > 0 && <>Discount: {product.discount}%</>}
                 </p>
 
                 <div className="flex justify-center items-center gap-3 mt-2">

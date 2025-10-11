@@ -25,10 +25,10 @@ const Doctors: React.FC = () => {
           >
             <div className="flex flex-col items-center justify-center bg-gray-50 md:w-1/2 p-6">
               <img
-                src="/image/LuxeLookLogo.jpg"
-                // src={doctor.profileImageUrl}
+                // src="/image/LuxeLookLogo.jpg"
+                src={doctor.profileImageUrl}
                 alt="image"
-                className="w-32 h-32 object-cover shadow-lg mb-4"
+                className="w-32 h-32 object-cover mb-4"
               />
               <h2 className="text-md font-semibold text-gray-800">
                 {doctor.name}

@@ -5,7 +5,7 @@ import {
 } from "@/api/auth/queries";
 import type { registerPayload, verifyEmailPayload } from "@/api/auth/type";
 import { Button } from "@/components/ui/button";
-import { Calendar, Eye, EyeOff, Mail, User } from "lucide-react";
+import { Calendar, Eye, EyeOff, Loader2, Mail, User, X } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,6 +24,8 @@ import { addProfileImage } from "@/api/product/queries";
 import { GoogleLogin } from "@react-oauth/google";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -36,15 +38,12 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   // image states
-  const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
-  const [profileImageName, setProfileImageName] =
-    useState<string>("No file chosen");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // otp states
   const [otp, setOtp] = useState("");
-  const [isVerificationDialogOpen, setIsVerificationDialogOpen] =
-    useState(false);
+  const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
 
   // 🔹 upload mutation
   const uploadMutation = addProfileImage.useMutation({
@@ -57,15 +56,16 @@ const Register = () => {
     },
   });
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setProfileImage(file);
-      setProfileImageName(file.name);
-      uploadMutation.mutate({ image: file });
-    } else {
-      setProfileImage(null);
-      setProfileImageName("No file chosen");
+  const handleImageUpload = async (file: File) => {
+    setImagePreview(URL.createObjectURL(file)); // Show blob preview immediately
+    try {
+      const result = await uploadMutation.mutateAsync({ image: file });
+      const fullImageUrl = `https://localhost:7108/api/${result.url}`;
+      setProfileImageUrl(fullImageUrl);
+      toast.success("Profile image uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload profile image");
+      console.error("Upload error:", error);
     }
   };
 
@@ -132,6 +132,8 @@ const Register = () => {
   const googleLogin = async (token: string) => {
     googleLoginMutation.mutate({ token });
   };
+
+  const isLoading = uploadMutation.isPending || registerMutation.isPending;
 
   return (
     <div className="min-h-screen w-[40%] flex items-center justify-center bg-gray-100">
@@ -212,37 +214,42 @@ const Register = () => {
           </div>
 
           {/* Image Upload */}
-          <div className="relative w-full mt-6">
-            <label
-              htmlFor="file-upload"
-              className="cursor-pointer bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 py-2 rounded-md shadow transition"
-            >
-              Choose File
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-              required
-            />
-            <span id="file-name" className="text-gray-700 text-sm ml-10">
-              {profileImageName}
-            </span>
-
-            {profileImage && (
-              <div className="mt-3">
-                <img
-                  src={URL.createObjectURL(profileImage)}
-                  alt="image"
-                  className="w-24 h-20 object-cover rounded-md border"
+          <div className="space-y-2">
+            <Label>Profile Image</Label>
+            <div className="flex items-center space-x-4">
+              <div className="flex-1">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImageUpload(file);
+                  }}
+                  disabled={isLoading}
                 />
               </div>
-            )}
-
-            {uploadMutation.isPending && (
-              <p className="text-sm text-blue-500 mt-2">Uploading...</p>
+              {uploadMutation.isPending && (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              )}
+            </div>
+            {imagePreview && (
+              <div className="relative w-24 h-24 border rounded-lg overflow-hidden">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-0 right-0 h-6 w-6 p-0 bg-red-500 hover:bg-red-600 text-white"
+                  onClick={() => setImagePreview(null)}
+                  disabled={isLoading}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
             )}
           </div>
 

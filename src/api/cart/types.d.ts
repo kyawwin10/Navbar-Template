@@ -7,6 +7,7 @@ export type cartPayload = {
   stockQTY: number;
   cost: number;
   price: number;
+  discount: number;
   currencySymbol: string;
   productImageUrl: string;
 };
