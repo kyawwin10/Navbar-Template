@@ -39,8 +39,8 @@ const Footer = () => {
             <h3 className="text-[#731212] font-semibold mb-3">CONTACT US</h3>
             <div className="flex justify-start items-center">
               <Mail className="inline-block mr-2" size={16} />
-              <Link to={"mailto:kyaw156win@gmail.com"}>
-                <p className="text-sm">kyaw156win@gmail.com</p>
+              <Link to={"mailto:Shinnyeinthit12345@gmail.com"}>
+                <p className="text-sm">Shinnyeinthit12345@gmail.com</p>
               </Link>
             </div>
             <p className="text-sm mt-2">Yaw Min Gyi Street, Yangon, Myanmar</p>
@@ -62,12 +62,12 @@ const Footer = () => {
             <div className="flex justify-start">
               <Input
                 type="email"
-                placeholder="kyaw156win@gmail.com"
+                placeholder="Shinnyeinthit12345@gmail.com"
                 className="w-full rounded-none bg-white"
                 disabled
               />
               <Button className="rounded-none">
-                <Link to={"mailto:kyaw156win@gmail.com"} target="_blank">
+                <Link to={"mailto:Shinnyeinthit12345@gmail.com"} target="_blank">
                   <Send className="w-5 h-5 text-white" />
                 </Link>
               </Button>

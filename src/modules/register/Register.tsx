@@ -3,6 +3,7 @@ import {
   userRegister,
   verification,
 } from "@/api/auth/queries";
+import { jwtDecode } from "jwt-decode";
 import type { registerPayload, verifyEmailPayload } from "@/api/auth/type";
 import { Button } from "@/components/ui/button";
 import { Calendar, Eye, EyeOff, Loader2, Mail, User, X } from "lucide-react";
@@ -43,7 +44,8 @@ const Register = () => {
 
   // otp states
   const [otp, setOtp] = useState("");
-  const [isVerificationDialogOpen, setIsVerificationDialogOpen] = useState(false);
+  const [isVerificationDialogOpen, setIsVerificationDialogOpen] =
+    useState(false);
 
   // 🔹 upload mutation
   const uploadMutation = addProfileImage.useMutation({
@@ -129,8 +131,8 @@ const Register = () => {
     },
   });
 
-  const googleLogin = async (token: string) => {
-    googleLoginMutation.mutate({ token });
+  const googleLogin = async (token: string, ProfileImageUrl: string) => {
+    googleLoginMutation.mutate({ token, ProfileImageUrl });
   };
 
   const isLoading = uploadMutation.isPending || registerMutation.isPending;
@@ -273,9 +275,24 @@ const Register = () => {
           </div>
 
           {/* Google Sign-In */}
-          <GoogleLogin
+          {/* <GoogleLogin
             onSuccess={(credentialResponse) => {
               googleLogin(credentialResponse.credential || "");
+            }}
+            onError={() => toast.error("Google Login Failed!")}
+          /> */}
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              let profileImageUrl = "";
+              try {
+                const decoded: any = jwtDecode(
+                  credentialResponse.credential || ""
+                );
+                profileImageUrl = decoded.picture || "";
+              } catch (e) {
+                profileImageUrl = "";
+              }
+              googleLogin(credentialResponse.credential || "", profileImageUrl);
             }}
             onError={() => toast.error("Google Login Failed!")}
           />

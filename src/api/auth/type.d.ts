@@ -18,6 +18,7 @@ export type verifyEmailPayload = {
 
 export type googleLoginPayload = {
   token: string
+  ProfileImageUrl: string
 }
 
 export type LoginResponsePayload = {

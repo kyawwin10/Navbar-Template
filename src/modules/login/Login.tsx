@@ -3,6 +3,7 @@ import type { loginPayload } from "@/api/auth/type";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
@@ -26,7 +27,10 @@ const Login = () => {
   const loginMutation = userLogin.useMutation({
     onSuccess: (data) => {
       Cookies.set("token", data.token, { expires: 1, path: "" });
-      Cookies.set("profileImageUrl", data.profileImageUrl, { expires: 1, path: "" });
+      Cookies.set("profileImageUrl", data.profileImageUrl, {
+        expires: 1,
+        path: "",
+      });
       Cookies.set("userName", data.userName, { expires: 1, path: "" });
       Cookies.set("roleName", data.roleName, { expires: 1, path: "" });
       navigate("/home");
@@ -61,8 +65,8 @@ const Login = () => {
     },
   });
 
-  const googleLogin = async (token: string) => {
-    googleLoginMutation.mutate({token});
+  const googleLogin = async (token: string, ProfileImageUrl: string) => {
+    googleLoginMutation.mutate({ token, ProfileImageUrl });
   };
 
   return (
@@ -70,7 +74,11 @@ const Login = () => {
       <div className="flex min-h-screen w-[40%] items-center justify-center">
         <form className="shadow-lg bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 rounded-xl p-6 w-full sm:w-[450px]">
           <div className="flex justify-center mb-4">
-            <img src="/image/LuxeLookLogo.jpg" className="w-20 h-20 rounded md:rounded-full " alt="logo" />
+            <img
+              src="/image/LuxeLookLogo.jpg"
+              className="w-20 h-20 rounded md:rounded-full "
+              alt="logo"
+            />
           </div>
 
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
@@ -134,9 +142,28 @@ const Login = () => {
           </div>
 
           {/* Google Login */}
-          <GoogleLogin
+          {/* <GoogleLogin
             onSuccess={(credentialResponse) => {
                 googleLogin(credentialResponse.credential || "");
+            }}
+            onError={() => toast.error("Google Login Failed!")}
+          /> */}
+
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              let profileImageUrl = "";
+              try {
+                const decoded: any = jwtDecode(
+                  credentialResponse.credential || ""
+                );
+                profileImageUrl = decoded.picture || "";
+              } catch (e) {
+                profileImageUrl = "";
+              }
+              if (profileImageUrl) {
+                Cookies.set("profileImageUrl", profileImageUrl, { expires: 7 });
+              }
+              googleLogin(credentialResponse.credential || "", profileImageUrl);
             }}
             onError={() => toast.error("Google Login Failed!")}
           />

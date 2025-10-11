@@ -18,7 +18,7 @@ import type { RootState } from "@/store";
 import CartPage from "@/modules/cart/CartPage";
 
 const Navbar: React.FC = () => {
-  const profileImageUrl = Cookies.get("profileImageUrl"); // <-- Fix: use correct cookie key
+  const profileImageUrl = Cookies.get("profileImageUrl");
   const [cartIconOpen, setCartIconOpen] = useState(false);
   const [favouriteIconOpen, setFavouriteIconOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -48,6 +48,7 @@ const Navbar: React.FC = () => {
     Cookies.remove("token");
     Cookies.remove("userName");
     Cookies.remove("roleName");
+    Cookies.remove("profileImageUrl");
     navigate("/login");
   };
 
