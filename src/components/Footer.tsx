@@ -15,7 +15,7 @@ import { Input } from "./ui/input";
 const Footer = () => {
   return (
     <>
-      <footer className="bg-[#ccc] text-[#731212] px-8 py-10">
+      <footer className="bg-[#cccccc] text-[#731212] px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           <div>
             <img

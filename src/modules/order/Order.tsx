@@ -1,7 +1,6 @@
 import { addOrders } from "@/api/order/queries";
 import type { orderAddPayload } from "@/api/order/types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { RootState } from "@/store";
 import { clearCart } from "@/store/feature/cartSlice";
@@ -171,7 +170,7 @@ const Order: React.FC = () => {
               <div>
                 <Label className="mb-2">Payment Type</Label>
                 <select
-                  className="border rounded w-full p-2"
+                  className="border rounded-md w-full p-2"
                   value={paymentType}
                   onChange={(e) => setPaymentType(e.target.value)}
                 >
@@ -182,10 +181,12 @@ const Order: React.FC = () => {
               </div>
               <div>
                 <Label className="mb-2">Delivery Fee</Label>
-                <Input
-                  type="text"
-                  value={deliFee}
+                <input
+                  disabled={isFreeDelivery}
+                  type="number"
+                  value={isFreeDelivery ? 0 : deliFee}
                   onChange={(e) => setDeliFee(Number(e.target.value))}
+                  className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 disabled:bg-[#ffffff] disabled:text-gray-500"
                 />
               </div>
             </div>

@@ -138,27 +138,27 @@ const Register = () => {
   const isLoading = uploadMutation.isPending || registerMutation.isPending;
 
   return (
-    <div className="min-h-screen w-[40%] flex items-center justify-center bg-gray-100">
-      <div className="bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-4 rounded-2xl shadow-xl w-full sm:w-[450px]">
+    <div className="min-h-screen w-full lg:w-[40%] flex items-center justify-center bg-gray-100 px-4 sm:px-6 lg:px-0">
+      <div className="bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-4 sm:p-6 rounded-2xl shadow-xl w-full max-w-[450px] border border-[#dcdcdc]">
         <div className="flex justify-center mb-2">
           <img
             src="/image/LuxeLookLogo.jpg"
-            className="w-20 h-20 rounded md:rounded-full "
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full md:rounded-full"
             alt="logo"
           />
         </div>
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-4">
           Create an Account
         </h2>
 
-        <form className="space-y-4">
+        <form className="space-y-3 sm:space-y-4">
           {/* Email */}
           <div className="relative">
             <Mail className="absolute left-3 top-3 text-gray-400" size={18} />
             <input
               type="email"
               placeholder="Email"
-              className="w-full pl-10 p-2 border rounded-xl"
+              className="w-full pl-10 p-2 border border-[#dcdcdc] bg-[#ffffff] rounded-xl text-sm sm:text-base"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -170,7 +170,7 @@ const Register = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className="w-full p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-2 pr-10 border border-[#dcdcdc] bg-[#ffffff] rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -179,7 +179,7 @@ const Register = () => {
               className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400 hover:text-gray-600"
               onClick={() => setShowPassword((prev) => !prev)}
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </div>
           </div>
 
@@ -189,7 +189,7 @@ const Register = () => {
             <input
               type="text"
               placeholder="Enter Your Name"
-              className="w-full pl-10 p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full pl-10 p-2 border border-[#dcdcdc] bg-[#ffffff] rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               required
@@ -205,7 +205,7 @@ const Register = () => {
             <input
               type="number"
               placeholder="Age"
-              className="w-full pl-10 p-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full pl-10 p-2 border border-[#dcdcdc] bg-[#ffffff] rounded-xl outline-none text-sm sm:text-base"
               value={age}
               onChange={(e) => {
                 const value = e.target.value;
@@ -217,9 +217,9 @@ const Register = () => {
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <Label>Profile Image</Label>
-            <div className="flex items-center space-x-4">
-              <div className="flex-1">
+            <Label className="text-sm sm:text-base">Profile Image</Label>
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="flex-1 border border-[#dcdcdc] bg-[#ffffff] rounded-lg">
                 <Input
                   type="file"
                   accept="image/*"
@@ -228,6 +228,7 @@ const Register = () => {
                     if (file) handleImageUpload(file);
                   }}
                   disabled={isLoading}
+                  className="text-xs sm:text-sm"
                 />
               </div>
               {uploadMutation.isPending && (
@@ -235,7 +236,7 @@ const Register = () => {
               )}
             </div>
             {imagePreview && (
-              <div className="relative w-24 h-24 border rounded-lg overflow-hidden">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 border rounded-lg overflow-hidden">
                 <img
                   src={imagePreview}
                   alt="Preview"
@@ -245,7 +246,7 @@ const Register = () => {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute top-0 right-0 h-6 w-6 p-0 bg-red-500 hover:bg-red-600 text-white"
+                  className="absolute top-0 right-0 h-5 w-5 sm:h-6 sm:w-6 p-0 bg-red-500 hover:bg-red-600 text-white"
                   onClick={() => setImagePreview(null)}
                   disabled={isLoading}
                 >
@@ -256,21 +257,21 @@ const Register = () => {
           </div>
 
           {/* Register Button */}
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-4 sm:mt-6">
             <Button
               type="button"
               onClick={registerClick}
               disabled={registerMutation.isPending}
-              className="w-full p-5 rounded"
+              className="w-full p-4 sm:p-5 rounded text-sm sm:text-base"
             >
               {registerMutation.isPending ? "Registering..." : "Register"}
             </Button>
           </div>
 
           {/* Divider */}
-          <div className="flex items-center my-4">
+          <div className="flex items-center my-3 sm:my-4">
             <div className="flex-grow border-t border-gray-300"></div>
-            <span className="px-3 text-gray-500 text-sm">or</span>
+            <span className="px-3 text-gray-500 text-xs sm:text-sm">or</span>
             <div className="flex-grow border-t border-gray-300"></div>
           </div>
 
@@ -281,21 +282,24 @@ const Register = () => {
             }}
             onError={() => toast.error("Google Login Failed!")}
           /> */}
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              let profileImageUrl = "";
-              try {
-                const decoded: any = jwtDecode(
-                  credentialResponse.credential || ""
-                );
-                profileImageUrl = decoded.picture || "";
-              } catch (e) {
-                profileImageUrl = "";
-              }
-              googleLogin(credentialResponse.credential || "", profileImageUrl);
-            }}
-            onError={() => toast.error("Google Login Failed!")}
-          />
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                let profileImageUrl = "";
+                try {
+                  const decoded: any = jwtDecode(
+                    credentialResponse.credential || ""
+                  );
+                  profileImageUrl = decoded.picture || "";
+                } catch (e) {
+                  profileImageUrl = "";
+                }
+                googleLogin(credentialResponse.credential || "", profileImageUrl);
+              }}
+              onError={() => toast.error("Google Login Failed!")}
+              size="medium"
+            />
+          </div>
         </form>
 
         {/* OTP Dialog */}
@@ -303,20 +307,20 @@ const Register = () => {
           open={isVerificationDialogOpen}
           onOpenChange={setIsVerificationDialogOpen}
         >
-          <AlertDialogContent className="max-w-md rounded-2xl shadow-xl">
+          <AlertDialogContent className="max-w-xs sm:max-w-md rounded-2xl shadow-xl mx-4">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-center text-xl font-bold text-gray-800">
+              <AlertDialogTitle className="text-center text-lg sm:text-xl font-bold text-gray-800">
                 Enter Verification Code
               </AlertDialogTitle>
-              <p className="text-center text-sm text-gray-500">
+              <p className="text-center text-xs sm:text-sm text-gray-500">
                 We have sent a 6-digit OTP to your registered email.
               </p>
             </AlertDialogHeader>
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-4 sm:mt-6">
               <InputOTP
                 maxLength={6}
                 pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-                containerClassName="gap-3"
+                containerClassName="gap-2 sm:gap-3"
                 value={otp}
                 onChange={(value) => setOtp(value)}
               >
@@ -324,16 +328,16 @@ const Register = () => {
                   {Array.from({ length: 6 }).map((_, i) => (
                     <InputOTPSlot
                       key={i}
-                      className="w-12 h-12 text-lg rounded-md"
+                      className="w-10 h-10 sm:w-12 sm:h-12 text-base sm:text-lg rounded-md"
                       index={i}
                     />
                   ))}
                 </InputOTPGroup>
               </InputOTP>
             </div>
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-3 sm:mt-4">
               <Button
-                className="w-[60%]"
+                className="w-[70%] sm:w-[60%] text-sm sm:text-base"
                 onClick={verifyOtp}
                 disabled={verificationMutation.isPending || otp.length !== 6}
               >

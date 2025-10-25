@@ -1,6 +1,5 @@
-import { ChevronLeft, ChevronRight, CircleX, Heart } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleX, Heart, ShoppingCart } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { RxDotFilled } from "react-icons/rx";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Marquee from "react-fast-marquee";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,8 +33,8 @@ const Home: React.FC = () => {
   const [status, setStatus] = useState<string>("NewArrival");
   const [likedProducts, setLikedProducts] = useState<string[]>([]);
   const [showDiscountProducts, setShowDiscountProducts] = useState(false);
-
   const [selectProductId, setSelectProductId] = useState<string | null>("");
+
   const catId = location.state?.catId || null;
 
   const {
@@ -48,6 +47,7 @@ const Home: React.FC = () => {
     language,
     status,
   });
+
   const search = location.state?.search || "";
   const selectedProductID = location.state?.productID || null;
 
@@ -176,7 +176,7 @@ const Home: React.FC = () => {
 
   const shopDiscountClick = () => {
     setShowDiscountProducts(true);
-    setStatus(""); // Optionally clear status filter
+    setStatus("");
     setPageNumber(1);
   };
 
@@ -195,17 +195,14 @@ const Home: React.FC = () => {
     );
   }
 
-  // Add this filter for discount products:
   if (showDiscountProducts && filteredData) {
     filteredData = filteredData.filter((p: productPayload) => p.discount > 0);
   }
 
   const images = [
-    { src: "/image/LuxeLook10.png" },
-    { src: "/image/luxelook2.jpg" },
-    { src: "/image/luxelook11.png" },
-    { src: "/image/luxelook13.png" },
-    { src: "/image/p2.png" },
+    { src: "/image/banner.webp" },
+    { src: "/image/banner2.jpg" },
+    { src: "/image/banner3.jpg" },
   ];
 
   const categories = [
@@ -265,296 +262,347 @@ const Home: React.FC = () => {
     navigate("/productlist");
   };
 
-  if (error) return <span>Oops!</span>;
+  if (error) return <span className="flex justify-center items-center min-h-64 text-red-600 font-semibold">Oops! Something went wrong.</span>;
 
   return (
-    <>
-      <div className="max-w-full h-[510px] w-full m-auto relative group mb-5">
-        <div
-          style={{ backgroundImage: `url(${images[currentIndex].src})` }}
-          className="w-full h-full bg-center bg-cover duration-500"
-        ></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Hero Slider */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative h-64 md:h-80 lg:h-96 xl:h-[510px] rounded-2xl overflow-hidden shadow-2xl group mb-8 md:mb-12">
+          <div
+            style={{ backgroundImage: `url(${images[currentIndex].src})` }}
+            className="w-full h-full bg-center bg-cover transition-all duration-700 ease-in-out transform group-hover:scale-105"
+          ></div>
 
-        <div
-          onClick={prevSlide}
-          className="hidden group-hover:block absolute top-[50%] -translate-y-1/2 left-5 text-2xl rounded-full bg-black/20 text-white cursor-pointer"
-        >
-          <ChevronLeft size={30} />
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevSlide}
+            className="absolute top-1/2 -translate-y-1/2 left-4 text-white bg-black/30 hover:bg-black/50 backdrop-blur-sm rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
+          >
+            <ChevronLeft size={28} />
+          </button>
+
+          <button
+            onClick={nextSlide}
+            className="absolute top-1/2 -translate-y-1/2 right-4 text-white bg-black/30 hover:bg-black/50 backdrop-blur-sm rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100"
+          >
+            <ChevronRight size={28} />
+          </button>
+
+          {/* Dots Indicator */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+            {images.map((_, slideIndex) => (
+              <button
+                key={slideIndex}
+                onClick={() => goToSlide(slideIndex)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  currentIndex === slideIndex 
+                    ? "bg-white scale-125" 
+                    : "bg-white/50 hover:bg-white/80"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
-        <div
-          onClick={nextSlide}
-          className="hidden group-hover:block absolute top-[50%] -translate-y-1/2 right-5 text-2xl rounded-full bg-black/20 text-white cursor-pointer"
-        >
-          <ChevronRight size={30} />
+        {/* Promo Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+          <Card className="relative overflow-hidden bg-gradient-to-br from-rose-50 to-orange-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 group">
+            <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between">
+              <div className="flex-1 space-y-4 text-center md:text-left">
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-rose-700">500000MMK Buy</p>
+                  <p className="text-sm font-semibold text-rose-700">Delivery Free 1 Get</p>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Cosmetic Skin Perfectly</h2>
+                <Button
+                  onClick={shopClick}
+                  className="bg-gradient-to-r from-rose-700 to-pink-700 hover:from-rose-800 hover:to-pink-800 text-white rounded-full px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Shop Now
+                </Button>
+              </div>
+              <div className="mt-6 md:mt-0 md:ml-6 flex-shrink-0">
+                <img
+                  src="/image/hair.jpg"
+                  alt="Cosmetic Products"
+                  className="w-48 h-48 md:w-56 md:h-56 object-cover rounded-2xl shadow-lg group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 group">
+            <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between">
+              <div className="flex-1 space-y-4 text-center md:text-left">
+                <p className="text-sm font-semibold text-blue-700">15% Discount</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Hydrated Skin Perfectly</h2>
+                <Button
+                  onClick={shopDiscountClick}
+                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-full px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Shop Discount
+                </Button>
+              </div>
+              <div className="mt-6 md:mt-0 md:ml-6 flex-shrink-0">
+                <img
+                  src="/image/hair.jpg"
+                  alt="Hydrated Skin Products"
+                  className="w-48 h-48 md:w-56 md:h-56 object-cover rounded-2xl shadow-lg group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="flex justify-center">
-          {images.map((_, slideIndex) => (
-            <div
-              key={slideIndex}
-              onClick={() => goToSlide(slideIndex)}
-              className={`text-2xl cursor-pointer ${
-                currentIndex === slideIndex ? "text-black" : "text-gray-400"
+        {/* Category Filter */}
+        <div className="flex justify-center items-center gap-4 md:gap-8 mb-8">
+          {["NewArrival", "Special"].map((s) => (
+            <button
+              key={s}
+              onClick={() => handleStatusChange(s)}
+              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+                status === s
+                  ? "bg-gradient-to-r from-rose-700 to-pink-700 text-white shadow-lg"
+                  : "text-gray-600 hover:text-rose-700 bg-white shadow-md hover:shadow-lg"
               }`}
             >
-              <RxDotFilled />
-            </div>
+              {s}
+            </button>
           ))}
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        {/* Card 1 */}
-        <Card className="flex flex-col md:flex-row items-center md:items-start justify-between p-6 bg-[#f5e9dc] shadow">
-          <CardContent className="flex-1 space-y-3 mt-8">
-            <p className="text-sm font-medium text-gray-600">500000MMK Buy</p>
-            <p className="text-sm font-medium text-gray-600">
-              Delivery Free 1 Get
-            </p>
-            <h2 className="text-xl font-semibold">Cosmetic Skin Perfectly</h2>
-            <Button
-              onClick={shopClick}
-              className="bg-pink-700 hover:bg-pink-800 text-white rounded-full px-6 mt-4"
-            >
-              Shop Now
-            </Button>
-          </CardContent>
-          <div className="mt-4 h-full md:mt-0 md:ml-4 flex-shrink-0">
-            <img
-              src="/image/hair.jpg"
-              alt="image"
-              className="w-50 md:w-48 object-contain"
-            />
-          </div>
-        </Card>
-
-        {/* Card 2 */}
-        <Card className="flex flex-col md:flex-row items-center md:items-start justify-between p-6 bg-[#f5e9dc] shadow">
-          <CardContent className="flex-1 space-y-3 mt-14">
-            <p className="text-sm font-medium text-gray-600">15% Discount</p>
-            <h2 className="text-xl font-semibold">Hydrated Skin Perfectly</h2>
-            <Button
-              className="bg-pink-700 hover:bg-pink-800 text-white rounded-full px-6 mt-6"
-              onClick={shopDiscountClick}
-            >
-              Shop Now
-            </Button>
-          </CardContent>
-          <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
-            <img
-              src="/image/hair.jpg"
-              alt="Hydrated Skin"
-              className="w-40 md:w-48 object-contain"
-            />
-          </div>
-        </Card>
-      </div>
-
-      <div className="flex justify-center items-center gap-8 my-6">
-        {["NewArrival", "Special"].map((s) => (
-          <div
-            key={s}
-            onClick={() => handleStatusChange(s)}
-            className={`text-sm font-semibold p-1 rounded cursor-pointer transition-colors
-        ${
-          status === s
-            ? "bg-[#731212] text-white hover:bg-[#922222]"
-            : "text-gray-700 hover:text-[#731212]"
-        }`}
-          >
-            {s}
-          </div>
-        ))}
-      </div>
-
-      <div className="container mx-auto p-4">
-        {!isLoading && !error && filteredData && (
-          <div
-            className={
-              filteredData.length === 1
-                ? "flex justify-center"
-                : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"
-            }
-          >
-            {filteredData.length > 0 ? (
-              filteredData.map((product: productPayload) => (
-                <div
-                  key={product.productId}
-                  className="flex flex-col items-center text-center"
-                >
-                  <div
-                    className="flex items-center justify-center"
-                    onClick={() => productByIdClick(product.productId)}
-                  >
-                    <img
-                      // src={product.productImageUrl}
-                      src="image/skincare.jpg"
-                      alt={product.productName}
-                      className="w-36 h-40 rounded-xl object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <h2 className="text-sm font-semibold mt-2 text-[#731212]">
-                    {product.productName}
-                  </h2>
-                  <p className="text-sm text-[#731212]">{product.brandName}</p>
-                  <p className="text-sm text-[#731212] line-clamp-2">
-                    {product.productDescription}
-                  </p>
-
-                  <div className="mt-1">
-                    {product.discount > 0 && showDiscountProducts ? (
-                      <div className="flex flex-col items-center w-full">
-                        <span className="text-base font-bold text-[#d72660]">
-                          {product.currencySymbol}
-                          {(
-                            product.price -
-                            product.price * (product.discount / 100)
-                          ).toLocaleString()}
-                        </span>
-                        <span className="text-xs text-gray-400 line-through">
-                          {product.currencySymbol}
-                          {product.price.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-[#d72660] font-semibold mt-1">
-                          {product.discount}% OFF &middot; Save{" "}
-                          {(
-                            product.price * (product.discount / 100)
-                          ).toLocaleString()}{" "}
-                          {product.currencySymbol}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-base font-bold">
-                        {product.currencySymbol}
-                        {product.price.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    In Stock: {product.stockQTY}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {product.discount > 0 && <>Discount: {product.discount}%</>}
-                  </p>
-
-                  <div className="flex justify-center items-center gap-3 mt-2">
-                    <Heart
-                      onClick={() => addToFavouriteClick(product)}
-                      className="cursor-pointer"
-                      size={18}
-                      color={
-                        likedProducts.includes(product.productId)
-                          ? "red"
-                          : "currentColor"
-                      }
-                      fill={
-                        likedProducts.includes(product.productId)
-                          ? "red"
-                          : "none"
-                      }
-                    />
-                    <Button
-                      className="text-white rounded px-3 py-1 text-sm"
-                      onClick={() => addToCartClick(product)}
-                    >
-                      Add To Cart
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center text-gray-500 col-span-full">
-                No products found for "{selectedProductID}".
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Dialog for Product Details */}
-        {selectProductId && (
-          <div
-            className="fixed inset-0 flex items-center justify-center z-50"
-            onClick={closeDialog}
-          >
+        {/* Products Grid */}
+        <div className="mb-12">
+          {!isLoading && !error && filteredData && (
             <div
-              className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 overflow-hidden animate-fadeIn"
+              className={
+                filteredData.length === 1
+                  ? "flex justify-center"
+                  : "grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+              }
+            >
+              {filteredData.length > 0 ? (
+                filteredData.map((product: productPayload) => (
+                  <Card
+                    key={product.productId}
+                    className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white rounded-2xl"
+                  >
+                    <CardContent className="p-2">
+                      <div
+                        className="relative overflow-hidden rounded-md mb-4 cursor-pointer"
+                        onClick={() => productByIdClick(product.productId)}
+                      >
+                        <img
+                          src="/image/images.jpg"
+                          alt={product.productName}
+                          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        {product.discount > 0 && (
+                          <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                            -{product.discount}%
+                          </div>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToFavouriteClick(product);
+                          }}
+                          className="absolute top-3 right-3 bg-white/90 hover:bg-white rounded-full p-2 transition-all duration-300 hover:scale-110"
+                        >
+                          <Heart
+                            size={18}
+                            className={
+                              likedProducts.includes(product.productId)
+                                ? "text-red-500 fill-red-500"
+                                : "text-gray-600"
+                            }
+                          />
+                        </button>
+                      </div>
+
+                      {/* Product Info */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-gray-800 line-clamp-1 group-hover:text-rose-700 transition-colors">
+                          {product.productName}
+                        </h3>
+                        <p className="text-sm text-gray-600">{product.brandName}</p>
+                        <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                          {product.productDescription}
+                        </p>
+
+                        {/* Price Section */}
+                        <div className="space-y-1">
+                          {product.discount > 0 ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg font-bold text-rose-700">
+                                {product.currencySymbol}
+                                {(
+                                  product.price -
+                                  product.price * (product.discount / 100)
+                                ).toLocaleString()}
+                              </span>
+                              <span className="text-sm text-gray-400 line-through">
+                                {product.currencySymbol}
+                                {product.price.toLocaleString()}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-lg font-bold text-gray-800">
+                              {product.currencySymbol}
+                              {product.price.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Stock Info */}
+                        <p className="text-xs text-gray-500">
+                          In Stock: <span className="font-semibold">{product.stockQTY}</span>
+                        </p>
+
+                        {/* Add to Cart Button */}
+                        <Button
+                          onClick={() => addToCartClick(product)}
+                          className="w-full bg-gradient-to-r from-rose-700 to-pink-700 hover:bg-[#fa6262] text-white rounded-xl py-2.5 shadow-md"
+                        >
+                          <ShoppingCart size={16} className="mr-2" />
+                          Add To Cart
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-gray-500 text-lg">No products found.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {[...Array(10)].map((_, index) => (
+                <Card key={index} className="animate-pulse border-0 rounded-2xl">
+                  <CardContent className="p-4">
+                    <div className="bg-gray-200 rounded-xl h-48 mb-4"></div>
+                    <div className="space-y-2">
+                      <div className="bg-gray-200 rounded h-4"></div>
+                      <div className="bg-gray-200 rounded h-3 w-2/3"></div>
+                      <div className="bg-gray-200 rounded h-3"></div>
+                      <div className="bg-gray-200 rounded h-6 w-1/2"></div>
+                      <div className="bg-gray-200 rounded h-10 mt-2"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Product Details Dialog */}
+        {selectProductId && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black/50 backdrop-blur-sm">
+            <div
+              className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={closeDialog}
-                className="absolute top-3 right-3 text-gray-400 hover:text-black transition"
+                className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white rounded-full p-2 transition-all duration-300 hover:scale-110 shadow-lg"
               >
-                <CircleX size={28} />
+                <CircleX size={24} className="text-gray-600" />
               </button>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
                 {productById ? (
                   <>
                     <div className="flex items-center justify-center">
                       <img
-                        // src={
-                        //   productById.productImageUrl
-                        // }
                         src="/image/hair.jpg"
                         alt={productById.productName}
-                        className="rounded-xl w-60 h-60 object-cover shadow-md transition-transform hover:scale-105"
+                        className="rounded-2xl w-full max-w-md object-cover shadow-2xl"
                       />
                     </div>
 
-                    <div className="flex flex-col justify-between">
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-800">
-                          {productById.productName}
-                        </h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {productById.brandName}
-                        </p>
-                        <p className="text-gray-600 text-sm mt-2 line-clamp-3">
+                    <div className="flex flex-col justify-between space-y-6">
+                      <div className="space-y-4">
+                        <div>
+                          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                            {productById.productName}
+                          </h2>
+                          <p className="text-lg text-gray-600">{productById.brandName}</p>
+                        </div>
+                        
+                        <p className="text-gray-700 leading-relaxed">
                           {productById.productDescription}
                         </p>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-4">
+                            <span className="text-2xl font-bold text-rose-700">
+                              {productById.currencySymbol}
+                              {productById.discount > 0
+                                ? (
+                                    productById.price -
+                                    productById.price * (productById.discount / 100)
+                                  ).toLocaleString()
+                                : productById.price.toLocaleString()}
+                            </span>
+                            {productById.discount > 0 && (
+                              <>
+                                <span className="text-lg text-gray-400 line-through">
+                                  {productById.currencySymbol}
+                                  {productById.price.toLocaleString()}
+                                </span>
+                                <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm font-bold">
+                                  Save {productById.discount}%
+                                </span>
+                              </>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                            <span>In Stock: <strong>{productById.stockQTY}</strong></span>
+                            {productById.discount > 0 && (
+                              <span>Discount: <strong>{productById.discount}%</strong></span>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
-                      <div>
-                        <p className="text-xl font-bold text-[#731212]">
-                          {productById.currencySymbol}
-                          {productById.price.toFixed(2)}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          In Stock: {productById.stockQTY}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Discount: {productById.discount}%{" "}
-                        </p>
-
-                        <div className="flex gap-3 mt-4">
-                          <button
-                            onClick={() =>
-                              addToCartClick(productById as productPayload)
-                            }
-                            className="px-4 py-1.5 rounded-lg bg-[#731212] text-white hover:bg-red-800 transition"
-                          >
-                            Add to Cart
-                          </button>
-                          <button
-                            onClick={() =>
-                              addToFavouriteClick(productById as productPayload)
-                            }
-                            className="px-4 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
-                          >
-                            ❤️ Favourite
-                          </button>
-                        </div>
+                      <div className="flex gap-4">
+                        <Button
+                          onClick={() => addToCartClick(productById as productPayload)}
+                          className="flex-1 bg-gradient-to-r from-rose-700 to-pink-700 hover:bg-[#fa6262] text-white rounded-xl py-3 text-lg font-semibold"
+                        >
+                          <ShoppingCart size={20} className="mr-2" />
+                          Add to Cart
+                        </Button>
+                        <Button
+                          onClick={() => addToFavouriteClick(productById as productPayload)}
+                          variant="outline"
+                          className="flex-1 border-2 border-gray-300 hover:border-rose-300 hover:bg-rose-50 text-gray-700 rounded-xl py-3 text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                        >
+                          <Heart
+                            size={20}
+                            className="mr-2"
+                            fill={likedProducts.includes(productById.productId) ? "currentColor" : "none"}
+                          />
+                          Favourite
+                        </Button>
                       </div>
                     </div>
                   </>
                 ) : (
-                  <div className="col-span-2 flex justify-center items-center p-6 text-gray-500">
+                  <div className="col-span-2 flex justify-center items-center p-12">
                     {productDetailsLoading ? (
-                      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-500"></div>
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
                     ) : (
-                      "Product not found."
+                      <div className="text-center text-gray-500">
+                        <p className="text-lg">Product not found.</p>
+                      </div>
                     )}
                   </div>
                 )}
@@ -563,14 +611,14 @@ const Home: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between w-full mt-8">
-          {/* Page size */}
-          <div className="shadow bg-white rounded-md border-[#731212]">
+        {/* Pagination and Controls */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-12 p-4">
+          <div className="flex items-center gap-4">
             <select
               id="pageSize"
               value={pageSize}
               onChange={handlePageSizeChange}
-              className="px-2 py-1 hover:text-[#731212] font-semibold"
+              className="px-4 py-2 border border-[#dcdcdc] rounded-lg"
             >
               <option value={10}>10</option>
               <option value={15}>15</option>
@@ -591,7 +639,9 @@ const Home: React.FC = () => {
                         if (pageNumber > 1) handlePageChange(pageNumber - 1);
                       }}
                       className={
-                        pageNumber === 1 ? "pointer-events-none opacity-70" : ""
+                        pageNumber === 1 
+                          ? "pointer-events-none opacity-50" 
+                          : "hover:bg-rose-50 hover:text-rose-700 transition-colors"
                       }
                     />
                   </PaginationItem>
@@ -606,6 +656,11 @@ const Home: React.FC = () => {
                             e.preventDefault();
                             handlePageChange(page);
                           }}
+                          className={
+                            page === pageNumber
+                              ? "bg-rose-700 text-white hover:bg-rose-800"
+                              : "hover:bg-rose-50 hover:text-rose-700"
+                          }
                         >
                           {page}
                         </PaginationLink>
@@ -627,7 +682,7 @@ const Home: React.FC = () => {
                       className={
                         allStatus.length < pageSize
                           ? "pointer-events-none opacity-50"
-                          : ""
+                          : "hover:bg-rose-50 hover:text-rose-700 transition-colors"
                       }
                     />
                   </PaginationItem>
@@ -636,13 +691,12 @@ const Home: React.FC = () => {
             )}
           </div>
 
-          {/* Price currencies */}
-          <div className="bg-white rounded-md">
+          <div className="flex items-center border-[#dcdcdc] bg-white rounded-md">
             <select
               id="language"
               value={language}
               onChange={handleLanguageChange}
-              className="px-2 py-1 font-semibold hover:text-[#731212]"
+              className="px-2 py-1 border border-[#dcdcdc] rounded-lg font-semibold hover:text-[#731212]"
             >
               <option value="us">US</option>
               <option value="uk">UK</option>
@@ -654,52 +708,32 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="bg-gray-700 my-4 h-[0.5px] mx-6 shadow-lg"></div>
 
-      <Marquee>
-        <div className="flex gap-10 justify-center flex-wrap mt-6 mb-10 ml-10">
-          {categories.map((cat, index) => (
-            <Link
-              key={index}
-              to="/productlist"
-              className="flex flex-col items-center cursor-pointer"
-            >
+      <div className="border-t border-b border-gray-200 py-8 bg-gradient-to-r from-gray-50 to-white">
+        <Marquee gradient={false} speed={50}>
+          <div className="flex gap-8 px-4">
+            {categories.concat(categories).map((cat, index) => (
+              <Link
+                key={`${cat.title}-${index}`}
+                to="/productlist"
+                className="group flex flex-col items-center cursor-pointer transition-all duration-300 transform hover:scale-110"
+              >
               <div className="w-24 h-24 overflow-hidden rounded-full flex items-center justify-center shadow">
-                <img
-                  src={cat.src}
-                  alt={cat.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="mt-3 text-sm font-semibold tracking-wide text-gray-700">
-                {cat.title}
-              </p>
-            </Link>
-          ))}
-        </div>
-
-        <div className="flex gap-10 justify-center flex-wrap mt-6 mb-10 ml-10">
-          {categories.map((cat, index) => (
-            <Link
-              key={index}
-              to="/productlist"
-              className="flex flex-col items-center cursor-pointer"
-            >
-              <div className="w-24 h-24 overflow-hidden rounded-full flex items-center justify-center shadow">
-                <img
-                  src={cat.src}
-                  alt={cat.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="mt-3 text-sm font-semibold tracking-wide text-gray-700">
-                {cat.title}
-              </p>
-            </Link>
-          ))}
-        </div>
-      </Marquee>
-    </>
+                  <img
+                    src={cat.src}
+                    alt={cat.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <p className="mt-3 text-sm font-semibold text-gray-700 group-hover:text-rose-700 transition-colors">
+                  {cat.title}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </Marquee>
+      </div>
+    </div>
   );
 };
 
